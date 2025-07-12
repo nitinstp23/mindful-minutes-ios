@@ -9,38 +9,55 @@ import SwiftUI
 import SwiftData
 
 struct ContentView: View {
+    @Environment(\.modelContext) private var modelContext
+    @State private var dataCoordinator: MindfulDataCoordinator?
+    
     var body: some View {
-        TabView {
-            HomeView()
-                .tabItem {
-                    Image(systemName: "house.fill")
-                    Text("Home")
-                }
+        Group {
+            if let coordinator = dataCoordinator {
+                TabView {
+                    HomeView()
+                        .tabItem {
+                            Image(systemName: "house.fill")
+                            Text("Home")
+                        }
 
-            ProgressScreenView()
-                .tabItem {
-                    Image(systemName: "chart.line.uptrend.xyaxis")
-                    Text("Progress")
-                }
+                    ProgressScreenView()
+                        .tabItem {
+                            Image(systemName: "chart.line.uptrend.xyaxis")
+                            Text("Progress")
+                        }
 
-            SessionsView()
-                .tabItem {
-                    Image(systemName: "figure.mind.and.body")
-                    Text("Sessions")
-                }
+                    SessionsView()
+                        .tabItem {
+                            Image(systemName: "figure.mind.and.body")
+                            Text("Sessions")
+                        }
 
-            SettingsView()
-                .tabItem {
-                    Image(systemName: "gear")
-                    Text("Settings")
+                    SettingsView()
+                        .tabItem {
+                            Image(systemName: "gear")
+                            Text("Settings")
+                        }
                 }
+                .environment(coordinator)
+                .accentColor(.mindfulPrimary)
+                .background(Color.mindfulBackground.ignoresSafeArea())
+            } else {
+                ProgressView("Loading...")
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.mindfulBackground.ignoresSafeArea())
+            }
         }
-        .accentColor(.mindfulPrimary)
-        .background(Color.mindfulBackground.ignoresSafeArea())
+        .onAppear {
+            if dataCoordinator == nil {
+                dataCoordinator = MindfulDataCoordinator(modelContext: modelContext)
+            }
+        }
     }
 }
 
 #Preview {
     ContentView()
-        .modelContainer(for: Item.self, inMemory: true)
+        .modelContainer(for: [MeditationSession.self, UserProfile.self, Milestone.self], inMemory: true)
 }

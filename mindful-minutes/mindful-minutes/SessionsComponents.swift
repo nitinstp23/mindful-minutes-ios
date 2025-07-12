@@ -2,18 +2,18 @@ import SwiftUI
 
 struct SessionGroup {
     let date: Date
-    let sessions: [SessionItem]
+    let sessions: [MeditationSession]
 }
 
 struct SessionRow: View {
-    let session: SessionItem
+    let session: MeditationSession
     let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: MindfulSpacing.standard) {
                 VStack {
-                    Image(systemName: sessionTypeIcon(session.type))
+                    Image(systemName: session.sessionTypeIcon)
                         .font(.title2)
                         .foregroundColor(.mindfulPrimary)
                         .frame(width: 40, height: 40)
@@ -23,13 +23,13 @@ struct SessionRow: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
-                        Text(session.type)
+                        Text(session.type.rawValue)
                             .font(.headline)
                             .foregroundColor(.primary)
 
                         Spacer()
 
-                        Text(formatDuration(session.duration))
+                        Text(session.formattedDuration)
                             .font(.headline)
                             .fontWeight(.medium)
                             .foregroundColor(.mindfulPrimary)
@@ -69,21 +69,6 @@ struct SessionRow: View {
         .padding(.vertical, 4)
     }
 
-    private func sessionTypeIcon(_ type: String) -> String {
-        switch type.lowercased() {
-        case "mindfulness": return "figure.mind.and.body"
-        case "breathing": return "lungs.fill"
-        case "body scan": return "figure.walk"
-        case "loving kindness": return "heart.fill"
-        case "focus": return "target"
-        default: return "figure.mind.and.body"
-        }
-    }
-
-    private func formatDuration(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        return "\(minutes) min"
-    }
 }
 
 struct FilterChip: View {
@@ -116,15 +101,6 @@ struct FilterChip: View {
     }
 }
 
-struct SessionItem: Identifiable {
-    let id: Int
-    let date: Date
-    let duration: Int
-    let type: String
-    let notes: String
-    let tags: [String]
-    let sessionNumber: Int
-}
 
 struct NewSessionView: View {
     @Environment(\.dismiss) private var dismiss

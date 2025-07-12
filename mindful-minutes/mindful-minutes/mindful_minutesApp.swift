@@ -12,7 +12,9 @@ import SwiftData
 struct MindfulMinutesApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self
+            MeditationSession.self,
+            UserProfile.self,
+            Milestone.self
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 

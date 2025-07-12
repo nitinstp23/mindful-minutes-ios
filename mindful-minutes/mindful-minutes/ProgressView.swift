@@ -1,11 +1,7 @@
 import SwiftUI
 
 struct ProgressScreenView: View {
-    @State private var currentStreak = 7
-    @State private var longestStreak = 14
-    @State private var totalSessions = 42
-    @State private var totalMinutes = 840
-    @State private var averageSession = 20
+    @Environment(MindfulDataCoordinator.self) private var dataCoordinator
     @State private var selectedTimeframe: TimeFrame = .week
 
     enum TimeFrame: String, CaseIterable {
@@ -14,24 +10,17 @@ struct ProgressScreenView: View {
         case year = "Year"
     }
 
-    // Sample data for charts
-    private let weeklyData = [
-        WeeklyChart.DayData(day: "Mon", minutes: 20, isToday: false),
-        WeeklyChart.DayData(day: "Tue", minutes: 15, isToday: false),
-        WeeklyChart.DayData(day: "Wed", minutes: 30, isToday: false),
-        WeeklyChart.DayData(day: "Thu", minutes: 25, isToday: false),
-        WeeklyChart.DayData(day: "Fri", minutes: 40, isToday: true),
-        WeeklyChart.DayData(day: "Sat", minutes: 0, isToday: false),
-        WeeklyChart.DayData(day: "Sun", minutes: 0, isToday: false)
-    ]
-
-    private let monthlyData: [MonthlyCalendar.DaySession] = {
-        (1...30).map { day in
-            let date = Calendar.current.date(from: DateComponents(year: 2024, month: 7, day: day)) ?? Date()
-            let minutes = [0, 0, 5, 10, 15, 20, 25, 30, 35, 40].randomElement() ?? 0
-            return MonthlyCalendar.DaySession(date: date, minutes: minutes, hasSession: minutes > 0)
+    private var weeklyData: [WeeklyChart.DayData] {
+        dataCoordinator.weeklyData().map { item in
+            WeeklyChart.DayData(day: item.day, minutes: item.minutes, isToday: item.isToday)
         }
-    }()
+    }
+    
+    private var monthlyData: [MonthlyCalendar.DaySession] {
+        dataCoordinator.monthlyData().map { item in
+            MonthlyCalendar.DaySession(date: item.date, minutes: item.minutes, hasSession: item.hasSession)
+        }
+    }
 
     var body: some View {
         NavigationView {
@@ -73,12 +62,12 @@ struct ProgressScreenView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
 
-                        Text("\(currentStreak)")
+                        Text("\(dataCoordinator.currentStreak)")
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.mindfulPrimary)
 
-                        Text(currentStreak == 1 ? "day" : "days")
+                        Text(dataCoordinator.currentStreak == 1 ? "day" : "days")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -95,12 +84,12 @@ struct ProgressScreenView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
 
-                        Text("\(longestStreak)")
+                        Text("\(dataCoordinator.longestStreak)")
                             .font(.title)
                             .fontWeight(.bold)
                             .foregroundColor(.mindfulSecondary)
 
-                        Text(longestStreak == 1 ? "day" : "days")
+                        Text(dataCoordinator.longestStreak == 1 ? "day" : "days")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -125,14 +114,14 @@ struct ProgressScreenView: View {
                     GridItem(.flexible()),
                     GridItem(.flexible())
                 ], spacing: MindfulSpacing.standard) {
-                    statItem(title: "Total Sessions", value: "\(totalSessions)", icon: "figure.mind.and.body")
-                    statItem(title: "Total Minutes", value: "\(totalMinutes)", icon: "clock.fill")
+                    statItem(title: "Total Sessions", value: "\(dataCoordinator.totalSessions)", icon: "figure.mind.and.body")
+                    statItem(title: "Total Minutes", value: "\(dataCoordinator.totalMinutes)", icon: "clock.fill")
                     statItem(
                         title: "Average Session",
-                        value: "\(averageSession) min",
+                        value: "\(dataCoordinator.averageSessionDuration) min",
                         icon: "chart.line.uptrend.xyaxis"
                     )
-                    statItem(title: "This Month", value: "18 sessions", icon: "calendar")
+                    statItem(title: "This Month", value: "\(dataCoordinator.monthlyData().filter { $0.hasSession }.count) sessions", icon: "calendar")
                 }
             }
         }
@@ -180,7 +169,7 @@ struct ProgressScreenView: View {
             switch selectedTimeframe {
             case .week:
                 MindfulCard {
-                    WeeklyChart(weeklyData: weeklyData, maxMinutes: 50)
+                    WeeklyChart(weeklyData: weeklyData, maxMinutes: weeklyData.map { $0.minutes }.max() ?? 50)
                 }
             case .month:
                 MindfulCard {
@@ -228,28 +217,15 @@ struct ProgressScreenView: View {
                 }
 
                 VStack(spacing: MindfulSpacing.small) {
-                    milestoneRow(title: "First Week", description: "Complete 7 days in a row", isCompleted: true)
-                    milestoneRow(
-                        title: "Consistent Meditator",
-                        description: "Reach 30-day streak",
-                        isCompleted: false,
-                        progress: 7,
-                        total: 30
-                    )
-                    milestoneRow(
-                        title: "Mindful Hours",
-                        description: "Meditate for 10 total hours",
-                        isCompleted: false,
-                        progress: 540,
-                        total: 600
-                    )
-                    milestoneRow(
-                        title: "Century Club",
-                        description: "Complete 100 sessions",
-                        isCompleted: false,
-                        progress: 42,
-                        total: 100
-                    )
+                    ForEach(Array(dataCoordinator.activeMilestones.prefix(4)), id: \.id) { milestone in
+                        milestoneRow(
+                            title: milestone.title,
+                            description: milestone.details,
+                            isCompleted: milestone.isCompleted,
+                            progress: milestone.currentValue,
+                            total: milestone.targetValue
+                        )
+                    }
                 }
             }
         }

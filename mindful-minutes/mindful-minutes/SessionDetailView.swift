@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct SessionDetailView: View {
-    let session: SessionItem
+    let session: MeditationSession
     @Environment(\.dismiss) private var dismiss
     @State private var showDeleteAlert = false
 
@@ -53,12 +53,12 @@ struct SessionDetailView: View {
         MindfulCard {
             VStack(spacing: MindfulSpacing.standard) {
                 HStack {
-                    Image(systemName: sessionTypeIcon(session.type))
+                    Image(systemName: session.sessionTypeIcon)
                         .font(.title)
                         .foregroundColor(.mindfulPrimary)
 
                     VStack(alignment: .leading, spacing: 4) {
-                        Text(session.type)
+                        Text(session.type.rawValue)
                             .font(.title2)
                             .fontWeight(.semibold)
 
@@ -81,7 +81,7 @@ struct SessionDetailView: View {
                         Text("Duration")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        Text(formatDuration(session.duration))
+                        Text(session.formattedDuration)
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.mindfulPrimary)
@@ -95,7 +95,7 @@ struct SessionDetailView: View {
                         Text("Session #")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                        Text("\(session.sessionNumber)")
+                        Text("\(session.sessionNumber ?? 0)")
                             .font(.title2)
                             .fontWeight(.bold)
                             .foregroundColor(.mindfulSecondary)
@@ -213,26 +213,7 @@ struct SessionDetailView: View {
         .padding(.vertical, MindfulSpacing.small)
     }
 
-    private func sessionTypeIcon(_ type: String) -> String {
-        switch type.lowercased() {
-        case "mindfulness": return "figure.mind.and.body"
-        case "breathing": return "lungs.fill"
-        case "body scan": return "figure.walk"
-        case "loving kindness": return "heart.fill"
-        case "focus": return "target"
-        default: return "figure.mind.and.body"
-        }
-    }
 
-    private func formatDuration(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
-        if remainingSeconds == 0 {
-            return "\(minutes) min"
-        } else {
-            return "\(minutes):\(String(format: "%02d", remainingSeconds))"
-        }
-    }
 
     private func repeatSession() {
         // TODO: Start a new session with same settings
@@ -244,16 +225,16 @@ struct SessionDetailView: View {
 }
 
 #Preview {
-    let sampleSession = SessionItem(
-        id: 1,
+    let sampleSession = MeditationSession(
         date: Date(),
         duration: 900,
-        type: "Mindfulness",
+        type: .mindfulness,
         notes: "Today's session was particularly peaceful. I focused on breath awareness and managed to " +
                "maintain concentration for most of the session. Feeling much more centered and ready for the day ahead.",
         tags: ["morning", "peaceful", "focused"],
         sessionNumber: 42
     )
 
-    SessionDetailView(session: sampleSession)
+    ContentView()
+        .modelContainer(for: [MeditationSession.self, UserProfile.self, Milestone.self], inMemory: true)
 }

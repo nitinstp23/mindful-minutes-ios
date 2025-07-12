@@ -1,104 +1,17 @@
 import SwiftUI
 
 struct SessionsView: View {
+    @Environment(MindfulDataCoordinator.self) private var dataCoordinator
     @State private var selectedFilter: SessionFilter = .all
     @State private var showingNewSession = false
     @State private var showingFilterOptions = false
     @State private var searchText = ""
-    @State private var selectedSession: SessionItem?
+    @State private var selectedSession: MeditationSession?
 
-    enum SessionFilter: String, CaseIterable {
-        case all = "All"
-        case today = "Today"
-        case thisWeek = "This Week"
-        case thisMonth = "This Month"
-        case mindfulness = "Mindfulness"
-        case breathing = "Breathing"
-        case bodyScan = "Body Scan"
-    }
 
-    private let mockSessions = [
-        SessionItem(
-            id: 1,
-            date: Date(),
-            duration: 900,
-            type: "Mindfulness",
-            notes: "Great session today",
-            tags: ["morning", "peaceful"],
-            sessionNumber: 42
-        ),
-        SessionItem(
-            id: 2,
-            date: Calendar.current.date(byAdding: .hour, value: -4, to: Date()) ?? Date(),
-            duration: 600,
-            type: "Breathing",
-            notes: "",
-            tags: ["quick"],
-            sessionNumber: 41
-        ),
-        SessionItem(
-            id: 3,
-            date: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date(),
-            duration: 1200,
-            type: "Body Scan",
-            notes: "Deep relaxation session",
-            tags: ["evening", "relaxing"],
-            sessionNumber: 40
-        ),
-        SessionItem(
-            id: 4,
-            date: Calendar.current.date(byAdding: .day, value: -2, to: Date()) ?? Date(),
-            duration: 480,
-            type: "Mindfulness",
-            notes: "",
-            tags: ["morning"],
-            sessionNumber: 39
-        ),
-        SessionItem(
-            id: 5,
-            date: Calendar.current.date(byAdding: .day, value: -3, to: Date()) ?? Date(),
-            duration: 1800,
-            type: "Loving Kindness",
-            notes: "Focused on compassion",
-            tags: ["evening", "compassion"],
-            sessionNumber: 38
-        ),
-        SessionItem(
-            id: 6,
-            date: Calendar.current.date(byAdding: .day, value: -4, to: Date()) ?? Date(),
-            duration: 300,
-            type: "Breathing",
-            notes: "",
-            tags: ["quick", "work"],
-            sessionNumber: 37
-        )
-    ]
 
-    private var filteredSessions: [SessionItem] {
-        let filtered = mockSessions.filter { session in
-            switch selectedFilter {
-            case .all:
-                return true
-            case .today:
-                return Calendar.current.isDateInToday(session.date)
-            case .thisWeek:
-                return Calendar.current.isDate(session.date, equalTo: Date(), toGranularity: .weekOfYear)
-            case .thisMonth:
-                return Calendar.current.isDate(session.date, equalTo: Date(), toGranularity: .month)
-            case .mindfulness, .breathing, .bodyScan:
-                return session.type.lowercased().contains(selectedFilter.rawValue.lowercased())
-            }
-        }
-
-        if searchText.isEmpty {
-            return filtered
-        } else {
-            return filtered.filter { session in
-                session.type.localizedCaseInsensitiveContains(searchText) ||
-                session.notes.localizedCaseInsensitiveContains(searchText) ||
-                session.tags.contains { $0.localizedCaseInsensitiveContains(searchText) }
-            }
-        }
+    private var filteredSessions: [MeditationSession] {
+        dataCoordinator.filteredSessions(by: selectedFilter, searchText: searchText)
     }
 
     var body: some View {
@@ -242,25 +155,10 @@ struct SessionsView: View {
     }
 
     private func getFilterCount(_ filter: SessionFilter) -> Int {
-        switch filter {
-        case .all:
-            return mockSessions.count
-        case .today:
-            return mockSessions.filter { Calendar.current.isDateInToday($0.date) }.count
-        case .thisWeek:
-            return mockSessions.filter {
-                Calendar.current.isDate($0.date, equalTo: Date(), toGranularity: .weekOfYear)
-            }.count
-        case .thisMonth:
-            return mockSessions.filter {
-                Calendar.current.isDate($0.date, equalTo: Date(), toGranularity: .month)
-            }.count
-        case .mindfulness, .breathing, .bodyScan:
-            return mockSessions.filter { $0.type.lowercased().contains(filter.rawValue.lowercased()) }.count
-        }
+        dataCoordinator.filteredSessions(by: filter).count
     }
 
-    private func groupSessionsByDate(_ sessions: [SessionItem]) -> [SessionGroup] {
+    private func groupSessionsByDate(_ sessions: [MeditationSession]) -> [SessionGroup] {
         let grouped = Dictionary(grouping: sessions) { session in
             Calendar.current.startOfDay(for: session.date)
         }
@@ -294,5 +192,6 @@ struct SessionsView: View {
 
 
 #Preview {
-    SessionsView()
+    ContentView()
+        .modelContainer(for: [MeditationSession.self, UserProfile.self, Milestone.self], inMemory: true)
 }

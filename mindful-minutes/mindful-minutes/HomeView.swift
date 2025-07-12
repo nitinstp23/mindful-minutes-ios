@@ -1,12 +1,7 @@
 import SwiftUI
 
 struct HomeView: View {
-    @State private var currentStreak = 7
-    @State private var longestStreak = 14
-    @State private var todayMinutes = 15
-    @State private var todaySessions = 2
-    @State private var weeklyGoal = 150
-    @State private var weeklyProgress = 85
+    @Environment(MindfulDataCoordinator.self) private var dataCoordinator
 
     private var greetingText: String {
         let hour = Calendar.current.component(.hour, from: Date())
@@ -31,7 +26,6 @@ struct HomeView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Mindful Minutes")
             .background(Color.mindfulBackground.ignoresSafeArea())
         }
     }
@@ -42,7 +36,7 @@ struct HomeView: View {
                 .font(.title2)
                 .fontWeight(.medium)
 
-            Text("Ready for your mindful moment?")
+            Text("Track your meditation journey 🪷")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -64,7 +58,7 @@ struct HomeView: View {
                     HStack {
                         Text("Minutes meditated:")
                         Spacer()
-                        Text("\(todayMinutes) min")
+                        Text("\(dataCoordinator.todaysMinutes) min")
                             .fontWeight(.medium)
                             .foregroundColor(.mindfulPrimary)
                     }
@@ -72,16 +66,16 @@ struct HomeView: View {
                     HStack {
                         Text("Sessions completed:")
                         Spacer()
-                        Text("\(todaySessions)")
+                        Text("\(dataCoordinator.todaysSessionCount)")
                             .fontWeight(.medium)
                             .foregroundColor(.mindfulPrimary)
                     }
 
-                    if todayMinutes > 0 {
+                    if dataCoordinator.todaysMinutes > 0 {
                         HStack {
                             Text("Average session:")
                             Spacer()
-                            Text("\(todayMinutes / max(todaySessions, 1)) min")
+                            Text("\(dataCoordinator.todaysMinutes / max(dataCoordinator.todaysSessionCount, 1)) min")
                                 .fontWeight(.medium)
                                 .foregroundColor(.mindfulSecondary)
                         }
@@ -106,21 +100,21 @@ struct HomeView: View {
                     HStack {
                         Text("Progress:")
                         Spacer()
-                        Text("\(weeklyProgress) / \(weeklyGoal) min")
+                        Text("\(dataCoordinator.weeklyProgress().completed) / \(dataCoordinator.weeklyProgress().goal) min")
                             .fontWeight(.medium)
                             .foregroundColor(.mindfulPrimary)
                     }
 
-                    ProgressView(value: Double(min(weeklyProgress, weeklyGoal)), total: Double(weeklyGoal))
+                    ProgressView(value: dataCoordinator.weeklyProgress().percentage)
                         .progressViewStyle(LinearProgressViewStyle(tint: .mindfulPrimary))
                         .scaleEffect(x: 1, y: 1.5, anchor: .center)
 
                     HStack {
-                        Text("\(Int((Double(weeklyProgress) / Double(weeklyGoal)) * 100))% complete")
+                        Text("\(Int(dataCoordinator.weeklyProgress().percentage * 100))% complete")
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text("\(weeklyGoal - weeklyProgress) min remaining")
+                        Text("\(max(0, dataCoordinator.weeklyProgress().goal - dataCoordinator.weeklyProgress().completed)) min remaining")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -146,9 +140,21 @@ struct HomeView: View {
                 }
 
                 VStack(spacing: MindfulSpacing.small) {
-                    recentSessionRow(type: "Mindfulness", duration: 15, timeAgo: "2 hours ago")
-                    recentSessionRow(type: "Breathing", duration: 10, timeAgo: "This morning")
-                    recentSessionRow(type: "Body Scan", duration: 20, timeAgo: "Yesterday")
+                    let recentSessions = Array(dataCoordinator.allSessions.prefix(3))
+                    if recentSessions.isEmpty {
+                        Text("No sessions yet")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .padding(.vertical)
+                    } else {
+                        ForEach(recentSessions, id: \.id) { session in
+                            recentSessionRow(
+                                type: session.type.rawValue,
+                                duration: session.durationInMinutes,
+                                timeAgo: formatTimeAgo(session.date)
+                            )
+                        }
+                    }
                 }
             }
         }
@@ -177,6 +183,30 @@ struct HomeView: View {
 
     private func viewHistory() {
         // TODO: Navigate to sessions tab
+    }
+    
+    private func formatTimeAgo(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        if calendar.isDateInToday(date) {
+            let hours = calendar.dateComponents([.hour], from: date, to: now).hour ?? 0
+            let minutes = calendar.dateComponents([.minute], from: date, to: now).minute ?? 0
+            
+            if hours > 0 {
+                return "\(hours) hour\(hours == 1 ? "" : "s") ago"
+            } else if minutes > 0 {
+                return "\(minutes) minute\(minutes == 1 ? "" : "s") ago"
+            } else {
+                return "Just now"
+            }
+        } else if calendar.isDateInYesterday(date) {
+            return "Yesterday"
+        } else {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .short
+            return formatter.string(from: date)
+        }
     }
 }
 

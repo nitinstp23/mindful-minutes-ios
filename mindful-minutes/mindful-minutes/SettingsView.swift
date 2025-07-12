@@ -11,20 +11,20 @@ struct SettingsView: View {
     @State private var hapticFeedbackEnabled = true
     @State private var showingProfileEdit = false
     @State private var showingDataExport = false
-    
+
     enum AppTheme: String, CaseIterable {
         case light = "Light"
         case dark = "Dark"
         case system = "System"
     }
-    
+
     enum TextSize: String, CaseIterable {
         case small = "Small"
         case medium = "Medium"
         case large = "Large"
         case extraLarge = "Extra Large"
     }
-    
+
     var body: some View {
         NavigationView {
             List {
@@ -36,7 +36,7 @@ struct SettingsView: View {
                 dataSection
                 supportSection
                 aboutSection
-                
+
                 Section {
                     MindfulFooter()
                         .listRowBackground(Color.clear)
@@ -53,7 +53,7 @@ struct SettingsView: View {
             DataExportView()
         }
     }
-    
+
     private var profileSection: some View {
         Section("Profile") {
             Button(action: { showingProfileEdit = true }) {
@@ -61,23 +61,23 @@ struct SettingsView: View {
                     Image(systemName: "person.circle.fill")
                         .font(.title2)
                         .foregroundColor(.mindfulPrimary)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Nitin Misra")
                             .font(.headline)
                             .foregroundColor(.primary)
-                        
+
                         Text("nitin@example.com")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                        
+
                         Text("Member since December 2024")
                             .font(.caption)
                             .foregroundColor(.mindfulPrimary)
                     }
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: "chevron.right")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -87,12 +87,12 @@ struct SettingsView: View {
             .buttonStyle(PlainButtonStyle())
         }
     }
-    
+
     private var goalsSection: some View {
         Section("Goals & Targets") {
             HStack {
                 SettingsIcon(icon: "target", color: .mindfulPrimary)
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Weekly Goal")
                         .font(.body)
@@ -100,17 +100,17 @@ struct SettingsView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 Stepper("", value: $weeklyGoal, in: 50...500, step: 25)
                     .labelsHidden()
             }
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "calendar.badge.clock", color: .mindfulSecondary)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Session Reminders")
                             .font(.body)
@@ -122,12 +122,12 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     private var preferencesSection: some View {
         Section("Preferences") {
             HStack {
                 SettingsIcon(icon: "paintbrush.fill", color: .mindfulPrimary)
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Appearance")
                         .font(.body)
@@ -135,9 +135,9 @@ struct SettingsView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 Picker("Theme", selection: $selectedTheme) {
                     ForEach(AppTheme.allCases, id: \.self) { theme in
                         Text(theme.rawValue).tag(theme)
@@ -145,10 +145,10 @@ struct SettingsView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
             }
-            
+
             HStack {
                 SettingsIcon(icon: "textformat.size", color: .mindfulSecondary)
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Text Size")
                         .font(.body)
@@ -156,9 +156,9 @@ struct SettingsView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 Picker("Text Size", selection: $selectedTextSize) {
                     ForEach(TextSize.allCases, id: \.self) { size in
                         Text(size.rawValue).tag(size)
@@ -166,10 +166,10 @@ struct SettingsView: View {
                 }
                 .pickerStyle(MenuPickerStyle())
             }
-            
+
             HStack {
                 SettingsIcon(icon: "speaker.wave.2.fill", color: .blue)
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Sound Effects")
                         .font(.body)
@@ -177,16 +177,16 @@ struct SettingsView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 Toggle("", isOn: $soundEnabled)
                     .labelsHidden()
             }
-            
+
             HStack {
                 SettingsIcon(icon: "iphone.radiowaves.left.and.right", color: .purple)
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Haptic Feedback")
                         .font(.body)
@@ -194,20 +194,20 @@ struct SettingsView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 Toggle("", isOn: $hapticFeedbackEnabled)
                     .labelsHidden()
             }
         }
     }
-    
+
     private var notificationsSection: some View {
         Section("Notifications") {
             HStack {
                 SettingsIcon(icon: "bell.fill", color: .orange)
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Daily Reminders")
                         .font(.body)
@@ -215,17 +215,17 @@ struct SettingsView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }
-                
+
                 Spacer()
-                
+
                 Toggle("", isOn: $notificationsEnabled)
                     .labelsHidden()
             }
-            
+
             if notificationsEnabled {
                 HStack {
                     SettingsIcon(icon: "clock.fill", color: .mindfulPrimary)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Reminder Time")
                             .font(.body)
@@ -233,18 +233,18 @@ struct SettingsView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     Spacer()
-                    
+
                     DatePicker("", selection: $reminderTime, displayedComponents: .hourAndMinute)
                         .labelsHidden()
                 }
             }
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "app.badge.fill", color: .red)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Notification Settings")
                             .font(.body)
@@ -256,13 +256,13 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     private var accessibilitySection: some View {
         Section("Accessibility") {
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "accessibility", color: .mindfulPrimary)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Accessibility Options")
                             .font(.body)
@@ -272,11 +272,11 @@ struct SettingsView: View {
                     }
                 }
             }
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "eye.fill", color: .blue)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Reduce Motion")
                             .font(.body)
@@ -288,13 +288,13 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     private var dataSection: some View {
         Section("Data & Privacy") {
             Button(action: { showingDataExport = true }) {
                 HStack {
                     SettingsIcon(icon: "square.and.arrow.up", color: .mindfulSecondary)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Export Data")
                             .font(.body)
@@ -303,20 +303,20 @@ struct SettingsView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: "chevron.right")
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
             }
             .buttonStyle(PlainButtonStyle())
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "icloud.fill", color: .blue)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("iCloud Sync")
                             .font(.body)
@@ -326,11 +326,11 @@ struct SettingsView: View {
                     }
                 }
             }
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "hand.raised.fill", color: .purple)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Privacy Settings")
                             .font(.body)
@@ -342,13 +342,13 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     private var supportSection: some View {
         Section("Support") {
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "questionmark.circle.fill", color: .mindfulPrimary)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Help & FAQ")
                             .font(.body)
@@ -358,11 +358,11 @@ struct SettingsView: View {
                     }
                 }
             }
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "envelope.fill", color: .blue)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Contact Support")
                             .font(.body)
@@ -372,11 +372,11 @@ struct SettingsView: View {
                     }
                 }
             }
-            
+
             Button(action: rateApp) {
                 HStack {
                     SettingsIcon(icon: "star.fill", color: .yellow)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Rate Mindful Minutes")
                             .font(.body)
@@ -385,9 +385,9 @@ struct SettingsView: View {
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     Spacer()
-                    
+
                     Image(systemName: "chevron.right")
                         .font(.caption)
                         .foregroundColor(.secondary)
@@ -396,12 +396,12 @@ struct SettingsView: View {
             .buttonStyle(PlainButtonStyle())
         }
     }
-    
+
     private var aboutSection: some View {
         Section("About") {
             HStack {
                 SettingsIcon(icon: "info.circle.fill", color: .mindfulPrimary)
-                
+
                 VStack(alignment: .leading, spacing: 2) {
                     Text("App Version")
                         .font(.body)
@@ -410,11 +410,11 @@ struct SettingsView: View {
                         .foregroundColor(.secondary)
                 }
             }
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "doc.text.fill", color: .gray)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Privacy Policy")
                             .font(.body)
@@ -424,11 +424,11 @@ struct SettingsView: View {
                     }
                 }
             }
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "doc.text.fill", color: .gray)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Terms of Service")
                             .font(.body)
@@ -438,11 +438,11 @@ struct SettingsView: View {
                     }
                 }
             }
-            
+
             NavigationLink(destination: EmptyView()) {
                 HStack {
                     SettingsIcon(icon: "heart.fill", color: .red)
-                    
+
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Acknowledgments")
                             .font(.body)
@@ -454,69 +454,9 @@ struct SettingsView: View {
             }
         }
     }
-    
+
     private func rateApp() {
         // TODO: Open App Store rating
-    }
-}
-
-struct SettingsIcon: View {
-    let icon: String
-    let color: Color
-    
-    var body: some View {
-        Image(systemName: icon)
-            .font(.title3)
-            .foregroundColor(.white)
-            .frame(width: 28, height: 28)
-            .background(color)
-            .cornerRadius(6)
-    }
-}
-
-struct ProfileEditView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Profile Edit Screen")
-                    .font(.title)
-                Text("Profile editing form coming soon")
-                    .foregroundColor(.secondary)
-            }
-            .navigationTitle("Edit Profile")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-            }
-        }
-    }
-}
-
-struct DataExportView: View {
-    @Environment(\.dismiss) private var dismiss
-    
-    var body: some View {
-        NavigationView {
-            VStack {
-                Text("Data Export Screen")
-                    .font(.title)
-                Text("Data export options coming soon")
-                    .foregroundColor(.secondary)
-            }
-            .navigationTitle("Export Data")
-            .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    Button("Cancel") {
-                        dismiss()
-                    }
-                }
-            }
-        }
     }
 }
 

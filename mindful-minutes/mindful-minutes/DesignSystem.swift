@@ -9,11 +9,11 @@ extension Color {
 
 struct MindfulCard<Content: View>: View {
     let content: Content
-    
+
     init(@ViewBuilder content: () -> Content) {
         self.content = content()
     }
-    
+
     var body: some View {
         content
             .padding()
@@ -27,12 +27,12 @@ struct MindfulButton: View {
     let title: String
     let action: () -> Void
     let style: ButtonStyle
-    
+
     enum ButtonStyle {
         case primary
         case secondary
     }
-    
+
     var body: some View {
         Button(action: action) {
             Text(title)
@@ -62,7 +62,7 @@ struct MindfulFooter: View {
         VStack(spacing: MindfulSpacing.standard) {
             Divider()
                 .background(Color.mindfulPrimary.opacity(0.3))
-            
+
             Text("Made with ❤️ by MindfulLabs")
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -83,7 +83,7 @@ struct MindfulFooter: View {
                     .foregroundColor(.secondary)
             }
         }
-        
+
         MindfulButton(title: "Primary Button", action: {}, style: .primary)
         MindfulButton(title: "Secondary Button", action: {}, style: .secondary)
     }

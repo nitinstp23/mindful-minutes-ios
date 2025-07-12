@@ -3,13 +3,13 @@ import SwiftUI
 struct WeeklyChart: View {
     let weeklyData: [DayData]
     let maxMinutes: Int
-    
+
     struct DayData {
         let day: String
         let minutes: Int
         let isToday: Bool
     }
-    
+
     var body: some View {
         VStack(spacing: MindfulSpacing.standard) {
             HStack {
@@ -21,7 +21,7 @@ struct WeeklyChart: View {
                     .foregroundColor(.mindfulPrimary)
                     .fontWeight(.medium)
             }
-            
+
             HStack(alignment: .bottom, spacing: 8) {
                 ForEach(Array(weeklyData.enumerated()), id: \.offset) { _, dayData in
                     VStack(spacing: 4) {
@@ -32,7 +32,7 @@ struct WeeklyChart: View {
                                 height: max(4, CGFloat(dayData.minutes) / CGFloat(maxMinutes) * 120)
                             )
                             .animation(.easeInOut(duration: 0.5), value: dayData.minutes)
-                        
+
                         Text(dayData.day)
                             .font(.caption2)
                             .foregroundColor(dayData.isToday ? .mindfulPrimary : .secondary)
@@ -41,7 +41,7 @@ struct WeeklyChart: View {
                 }
             }
             .frame(height: 140)
-            
+
             HStack {
                 Text("0 min")
                     .font(.caption2)
@@ -65,7 +65,7 @@ struct WeeklyChart: View {
         WeeklyChart.DayData(day: "Sat", minutes: 0, isToday: false),
         WeeklyChart.DayData(day: "Sun", minutes: 0, isToday: false)
     ]
-    
+
     MindfulCard {
         WeeklyChart(weeklyData: sampleData, maxMinutes: 50)
     }

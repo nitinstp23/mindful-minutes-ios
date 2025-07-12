@@ -4,7 +4,7 @@ struct SessionDetailView: View {
     let session: SessionItem
     @Environment(\.dismiss) private var dismiss
     @State private var showDeleteAlert = false
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -15,7 +15,7 @@ struct SessionDetailView: View {
                         notesSection
                     }
                     actionsSection
-                    
+
                     Spacer()
                 }
                 .padding()
@@ -28,7 +28,7 @@ struct SessionDetailView: View {
                         dismiss()
                     }
                 }
-                
+
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Edit") {
                         // TODO: Navigate to edit session
@@ -48,7 +48,7 @@ struct SessionDetailView: View {
             Text("Are you sure you want to delete this session? This action cannot be undone.")
         }
     }
-    
+
     private var headerSection: some View {
         MindfulCard {
             VStack(spacing: MindfulSpacing.standard) {
@@ -56,26 +56,26 @@ struct SessionDetailView: View {
                     Image(systemName: sessionTypeIcon(session.type))
                         .font(.title)
                         .foregroundColor(.mindfulPrimary)
-                    
+
                     VStack(alignment: .leading, spacing: 4) {
                         Text(session.type)
                             .font(.title2)
                             .fontWeight(.semibold)
-                        
+
                         Text(session.date, style: .date)
                             .font(.subheadline)
                             .foregroundColor(.secondary)
-                        
+
                         Text(session.date, style: .time)
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
-                    
+
                     Spacer()
                 }
-                
+
                 Divider()
-                
+
                 HStack {
                     VStack {
                         Text("Duration")
@@ -87,10 +87,10 @@ struct SessionDetailView: View {
                             .foregroundColor(.mindfulPrimary)
                     }
                     .frame(maxWidth: .infinity)
-                    
+
                     Divider()
                         .frame(height: 40)
-                    
+
                     VStack {
                         Text("Session #")
                             .font(.caption)
@@ -105,7 +105,7 @@ struct SessionDetailView: View {
             }
         }
     }
-    
+
     private var statsSection: some View {
         MindfulCard {
             VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
@@ -116,7 +116,7 @@ struct SessionDetailView: View {
                         .font(.headline)
                     Spacer()
                 }
-                
+
                 LazyVGrid(columns: [
                     GridItem(.flexible()),
                     GridItem(.flexible())
@@ -126,13 +126,13 @@ struct SessionDetailView: View {
                     statItem(title: "Breathing", value: "12/min", icon: "lungs.fill")
                     statItem(title: "Calm Level", value: "High", icon: "leaf.fill")
                 }
-                
+
                 if !session.tags.isEmpty {
                     VStack(alignment: .leading, spacing: MindfulSpacing.small) {
                         Text("Tags")
                             .font(.subheadline)
                             .fontWeight(.medium)
-                        
+
                         LazyVGrid(columns: [
                             GridItem(.adaptive(minimum: 80))
                         ], spacing: 8) {
@@ -151,7 +151,7 @@ struct SessionDetailView: View {
             }
         }
     }
-    
+
     private var notesSection: some View {
         MindfulCard {
             VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
@@ -162,7 +162,7 @@ struct SessionDetailView: View {
                         .font(.headline)
                     Spacer()
                 }
-                
+
                 Text(session.notes)
                     .font(.body)
                     .foregroundColor(.primary)
@@ -170,14 +170,14 @@ struct SessionDetailView: View {
             }
         }
     }
-    
+
     private var actionsSection: some View {
         VStack(spacing: MindfulSpacing.standard) {
             MindfulButton(title: "Repeat Session", action: repeatSession, style: .primary)
-            
+
             HStack(spacing: MindfulSpacing.standard) {
                 MindfulButton(title: "Share", action: shareSession, style: .secondary)
-                
+
                 Button("Delete") {
                     showDeleteAlert = true
                 }
@@ -192,18 +192,18 @@ struct SessionDetailView: View {
             }
         }
     }
-    
+
     private func statItem(title: String, value: String, icon: String) -> some View {
         VStack(spacing: 4) {
             Image(systemName: icon)
                 .font(.title3)
                 .foregroundColor(.mindfulSecondary)
-            
+
             Text(value)
                 .font(.headline)
                 .fontWeight(.bold)
                 .foregroundColor(.mindfulPrimary)
-            
+
             Text(title)
                 .font(.caption)
                 .foregroundColor(.secondary)
@@ -212,7 +212,7 @@ struct SessionDetailView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, MindfulSpacing.small)
     }
-    
+
     private func sessionTypeIcon(_ type: String) -> String {
         switch type.lowercased() {
         case "mindfulness": return "figure.mind.and.body"
@@ -223,7 +223,7 @@ struct SessionDetailView: View {
         default: return "figure.mind.and.body"
         }
     }
-    
+
     private func formatDuration(_ seconds: Int) -> String {
         let minutes = seconds / 60
         let remainingSeconds = seconds % 60
@@ -233,11 +233,11 @@ struct SessionDetailView: View {
             return "\(minutes):\(String(format: "%02d", remainingSeconds))"
         }
     }
-    
+
     private func repeatSession() {
         // TODO: Start a new session with same settings
     }
-    
+
     private func shareSession() {
         // TODO: Share session details
     }
@@ -249,10 +249,11 @@ struct SessionDetailView: View {
         date: Date(),
         duration: 900,
         type: "Mindfulness",
-        notes: "Today's session was particularly peaceful. I focused on breath awareness and managed to maintain concentration for most of the session. Feeling much more centered and ready for the day ahead.",
+        notes: "Today's session was particularly peaceful. I focused on breath awareness and managed to " +
+               "maintain concentration for most of the session. Feeling much more centered and ready for the day ahead.",
         tags: ["morning", "peaceful", "focused"],
         sessionNumber: 42
     )
-    
+
     SessionDetailView(session: sampleSession)
 }

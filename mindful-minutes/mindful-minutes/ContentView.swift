@@ -16,19 +16,19 @@ struct ContentView: View {
                     Image(systemName: "house.fill")
                     Text("Home")
                 }
-            
+
             ProgressScreenView()
                 .tabItem {
                     Image(systemName: "chart.line.uptrend.xyaxis")
                     Text("Progress")
                 }
-            
+
             SessionsView()
                 .tabItem {
                     Image(systemName: "figure.mind.and.body")
                     Text("Sessions")
                 }
-            
+
             SettingsView()
                 .tabItem {
                     Image(systemName: "gear")

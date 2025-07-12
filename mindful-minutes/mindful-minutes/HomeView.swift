@@ -7,7 +7,7 @@ struct HomeView: View {
     @State private var todaySessions = 2
     @State private var weeklyGoal = 150
     @State private var weeklyProgress = 85
-    
+
     private var greetingText: String {
         let hour = Calendar.current.component(.hour, from: Date())
         switch hour {
@@ -17,7 +17,7 @@ struct HomeView: View {
         default: return "Good night"
         }
     }
-    
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -26,7 +26,7 @@ struct HomeView: View {
                     todayProgressSection
                     weeklyOverviewSection
                     recentSessionsSection
-                    
+
                     MindfulFooter()
                 }
                 .padding()
@@ -35,20 +35,20 @@ struct HomeView: View {
             .background(Color.mindfulBackground.ignoresSafeArea())
         }
     }
-    
+
     private var headerSection: some View {
         VStack(spacing: MindfulSpacing.small) {
             Text("\(greetingText), Nitin")
                 .font(.title2)
                 .fontWeight(.medium)
-            
+
             Text("Ready for your mindful moment?")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
         .padding(.top)
     }
-    
+
     private var todayProgressSection: some View {
         MindfulCard {
             VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
@@ -59,7 +59,7 @@ struct HomeView: View {
                         .font(.headline)
                     Spacer()
                 }
-                
+
                 VStack(spacing: MindfulSpacing.small) {
                     HStack {
                         Text("Minutes meditated:")
@@ -68,7 +68,7 @@ struct HomeView: View {
                             .fontWeight(.medium)
                             .foregroundColor(.mindfulPrimary)
                     }
-                    
+
                     HStack {
                         Text("Sessions completed:")
                         Spacer()
@@ -76,7 +76,7 @@ struct HomeView: View {
                             .fontWeight(.medium)
                             .foregroundColor(.mindfulPrimary)
                     }
-                    
+
                     if todayMinutes > 0 {
                         HStack {
                             Text("Average session:")
@@ -90,7 +90,7 @@ struct HomeView: View {
             }
         }
     }
-    
+
     private var weeklyOverviewSection: some View {
         MindfulCard {
             VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
@@ -101,7 +101,7 @@ struct HomeView: View {
                         .font(.headline)
                     Spacer()
                 }
-                
+
                 VStack(spacing: MindfulSpacing.small) {
                     HStack {
                         Text("Progress:")
@@ -110,11 +110,11 @@ struct HomeView: View {
                             .fontWeight(.medium)
                             .foregroundColor(.mindfulPrimary)
                     }
-                    
+
                     ProgressView(value: Double(min(weeklyProgress, weeklyGoal)), total: Double(weeklyGoal))
                         .progressViewStyle(LinearProgressViewStyle(tint: .mindfulPrimary))
                         .scaleEffect(x: 1, y: 1.5, anchor: .center)
-                    
+
                     HStack {
                         Text("\(Int((Double(weeklyProgress) / Double(weeklyGoal)) * 100))% complete")
                             .font(.caption)
@@ -128,7 +128,7 @@ struct HomeView: View {
             }
         }
     }
-    
+
     private var recentSessionsSection: some View {
         MindfulCard {
             VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
@@ -144,7 +144,7 @@ struct HomeView: View {
                     .font(.caption)
                     .foregroundColor(.mindfulPrimary)
                 }
-                
+
                 VStack(spacing: MindfulSpacing.small) {
                     recentSessionRow(type: "Mindfulness", duration: 15, timeAgo: "2 hours ago")
                     recentSessionRow(type: "Breathing", duration: 10, timeAgo: "This morning")
@@ -153,7 +153,7 @@ struct HomeView: View {
             }
         }
     }
-    
+
     private func recentSessionRow(type: String, duration: Int, timeAgo: String) -> some View {
         HStack {
             VStack(alignment: .leading, spacing: 2) {
@@ -164,9 +164,9 @@ struct HomeView: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
-            
+
             Spacer()
-            
+
             Text("\(duration) min")
                 .font(.subheadline)
                 .fontWeight(.medium)
@@ -174,7 +174,7 @@ struct HomeView: View {
         }
         .padding(.vertical, 2)
     }
-    
+
     private func viewHistory() {
         // TODO: Navigate to sessions tab
     }

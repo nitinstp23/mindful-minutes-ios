@@ -334,7 +334,7 @@ struct FilterChip: View {
         Button(action: onTap) {
             HStack(spacing: 4) {
                 Text(title)
-                if count > 0 {
+                if !isEmpty {
                     Text("(\(count))")
                         .font(.caption2)
                 }

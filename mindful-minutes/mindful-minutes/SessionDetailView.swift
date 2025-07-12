@@ -127,7 +127,7 @@ struct SessionDetailView: View {
                     statItem(title: "Calm Level", value: "High", icon: "leaf.fill")
                 }
                 
-                if session.tags.count > 0 {
+                if !session.tags.isEmpty {
                     VStack(alignment: .leading, spacing: MindfulSpacing.small) {
                         Text("Tags")
                             .font(.subheadline)

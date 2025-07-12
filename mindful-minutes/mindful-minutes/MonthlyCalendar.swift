@@ -69,7 +69,7 @@ struct MonthlyCalendar: View {
             
             VStack(spacing: 4) {
                 HStack {
-                    ForEach(Array(["S", "M", "T", "W", "T", "F", "S"].enumerated()), id: \.offset) { index, dayLetter in
+                    ForEach(Array(["S", "M", "T", "W", "T", "F", "S"].enumerated()), id: \.offset) { _, dayLetter in
                         Text(dayLetter)
                             .font(.caption2)
                             .fontWeight(.semibold)
@@ -78,9 +78,9 @@ struct MonthlyCalendar: View {
                     }
                 }
                 
-                ForEach(Array(weeks.enumerated()), id: \.offset) { weekIndex, week in
+                ForEach(Array(weeks.enumerated()), id: \.offset) { _, week in
                     HStack(spacing: 2) {
-                        ForEach(Array(week.enumerated()), id: \.offset) { dayIndex, daySession in
+                        ForEach(Array(week.enumerated()), id: \.offset) { _, daySession in
                             if let daySession = daySession {
                                 DayCell(daySession: daySession)
                             } else {

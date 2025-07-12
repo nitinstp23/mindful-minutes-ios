@@ -1,0 +1,35 @@
+name: SwiftLint
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.swift'
+      - '.swiftlint.yml'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - '**/*.swift'
+      - '.swiftlint.yml'
+
+jobs:
+  SwiftLint:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Run SwiftLint
+      uses: norio-nomura/action-swiftlint@3.2.1
+      with:
+        args: --strict --config .swiftlint.yml
+
+    - name: SwiftLint Results
+      if: failure()
+      run: |
+        echo "SwiftLint found style violations. Please fix them before merging."
+        echo "Run 'swiftlint' locally to see detailed violations."
+        echo "Many violations can be auto-fixed with 'swiftlint --fix'"

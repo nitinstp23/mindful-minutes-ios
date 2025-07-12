@@ -23,7 +23,7 @@ struct WeeklyChart: View {
             }
             
             HStack(alignment: .bottom, spacing: 8) {
-                ForEach(Array(weeklyData.enumerated()), id: \.offset) { index, dayData in
+                ForEach(Array(weeklyData.enumerated()), id: \.offset) { _, dayData in
                     VStack(spacing: 4) {
                         RoundedRectangle(cornerRadius: 4)
                             .fill(dayData.isToday ? Color.mindfulPrimary : Color.mindfulSecondary.opacity(0.7))

@@ -29,6 +29,7 @@ A native iOS meditation tracking app built with SwiftUI, featuring elegant desig
 - **Xcode**: 15.0+ (iOS 17.0+ required for SwiftData)
 - **iOS Deployment Target**: 17.0+
 - **Swift**: 5.9+
+- **SwiftLint**: 0.54.0+ (for code style enforcement)
 - **Frameworks**: SwiftUI, SwiftData, UserNotifications
 
 ## 🚀 Getting Started
@@ -44,10 +45,31 @@ cd mindful-minutes-ios
 open mindful-minutes/mindful-minutes.xcodeproj
 ```
 
-### 3. Build and Run
+### 3. Install SwiftLint (Optional but Recommended)
+```bash
+# Install via Homebrew
+brew install swiftlint
+
+# Or install via Swift Package Manager (already configured)
+# SwiftLint will be available as a build tool plugin
+```
+
+### 4. Build and Run
 1. Select your target device or simulator (iOS 17.0+)
 2. Press `⌘ + R` to build and run
 3. The app will launch with sample data
+
+### 5. Code Style (SwiftLint)
+```bash
+# Run SwiftLint to check code style
+swiftlint
+
+# Auto-fix violations where possible
+swiftlint --fix
+
+# Lint specific files
+swiftlint lint --path mindful-minutes/mindful-minutes/HomeView.swift
+```
 
 ## 📁 Project Structure
 
@@ -101,7 +123,7 @@ mindful-minutes-ios/
 - **SessionsView**: Filtering, search, grouped lists, detail navigation
 - **SettingsView**: 8 organized sections with interactive controls
 
-## 🧪 Testing
+## 🧪 Testing & Quality
 
 ### Run Unit Tests
 ```bash
@@ -112,6 +134,12 @@ mindful-minutes-ios/
 ```bash
 ⌘ + Ctrl + U
 ```
+
+### Code Quality (SwiftLint)
+- **Automatic**: GitHub Actions runs SwiftLint on every push/PR
+- **Local**: Run `swiftlint` before committing
+- **Configuration**: See `.swiftlint.yml` for rules and customization
+- **Integration**: Pre-configured for Xcode build phases
 
 ## 🚨 Troubleshooting
 

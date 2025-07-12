@@ -26,7 +26,7 @@ struct ProgressScreenView: View {
     ]
     
     private let monthlyData: [MonthlyCalendar.DaySession] = {
-        return (1...30).map { day in
+        (1...30).map { day in
             let date = Calendar.current.date(from: DateComponents(year: 2024, month: 7, day: day)) ?? Date()
             let minutes = [0, 0, 5, 10, 15, 20, 25, 30, 35, 40].randomElement() ?? 0
             return MonthlyCalendar.DaySession(date: date, minutes: minutes, hasSession: minutes > 0)

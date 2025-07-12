@@ -1,0 +1,113 @@
+# SwiftLint Configuration for Mindful Minutes iOS
+
+# Specify directories to include/exclude
+included:
+  - mindful-minutes/mindful-minutes
+
+excluded:
+  - mindful-minutes/mindful-minutes.xcodeproj
+  - mindful-minutes/mindful-minutesTests
+  - mindful-minutes/mindful-minutesUITests
+  - DerivedData
+  - Carthage
+  - Pods
+
+# Configure rules
+disabled_rules:
+  - trailing_whitespace # Can be auto-fixed
+  - todo # Allow TODO comments during development
+
+opt_in_rules:
+  - array_init
+  - closure_spacing
+  - contains_over_first_not_nil
+  - empty_count
+  - empty_string
+  - first_where
+  - force_unwrapping
+  - implicit_return
+  - joined_default_parameter
+  - literal_expression_end_indentation
+  - multiline_arguments
+  - multiline_function_chains
+  - multiline_literal_brackets
+  - multiline_parameters
+  - operator_usage_whitespace
+  - overridden_super_call
+  - prefer_self_type_over_type_of_self
+  - redundant_nil_coalescing
+  - redundant_type_annotation
+  - switch_case_alignment
+  - unneeded_parentheses_in_closure_argument
+  - vertical_parameter_alignment_on_call
+
+# Configure specific rules
+line_length:
+  warning: 120
+  error: 140
+  ignores_function_declarations: true
+  ignores_comments: true
+  ignores_urls: true
+
+file_length:
+  warning: 400
+  error: 500
+
+function_body_length:
+  warning: 50
+  error: 80
+
+type_body_length:
+  warning: 250
+  error: 300
+
+cyclomatic_complexity:
+  warning: 10
+  error: 15
+
+identifier_name:
+  min_length:
+    warning: 2
+    error: 1
+  max_length:
+    warning: 40
+    error: 50
+  excluded:
+    - id
+    - URL
+    - API
+    - UI
+
+# Force unwrapping configuration
+force_unwrapping:
+  severity: warning
+
+# Large tuple configuration
+large_tuple:
+  warning: 3
+  error: 4
+
+# Nesting configuration
+nesting:
+  type_level:
+    warning: 2
+    error: 3
+
+# Custom rules for mindful development
+custom_rules:
+  mindful_print_statements:
+    name: "Mindful Print Statements"
+    regex: '^\s*print\('
+    message: "Use proper logging instead of print statements"
+    severity: warning
+
+  mindful_force_try:
+    name: "Mindful Force Try"
+    regex: 'try!'
+    message: "Consider using proper error handling instead of force try"
+    severity: warning
+
+# Analyzer rules
+analyzer_rules:
+  - explicit_self
+  - unused_import

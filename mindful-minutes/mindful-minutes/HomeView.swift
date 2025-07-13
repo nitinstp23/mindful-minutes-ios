@@ -100,7 +100,8 @@ struct HomeView: View {
                     HStack {
                         Text("Progress:")
                         Spacer()
-                        Text("\(dataCoordinator.weeklyProgress().completed) / \(dataCoordinator.weeklyProgress().goal) min")
+                        let progress = dataCoordinator.weeklyProgress()
+                        Text("\(progress.completed) / \(progress.goal) min")
                             .fontWeight(.medium)
                             .foregroundColor(.mindfulPrimary)
                     }
@@ -114,7 +115,8 @@ struct HomeView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
-                        Text("\(max(0, dataCoordinator.weeklyProgress().goal - dataCoordinator.weeklyProgress().completed)) min remaining")
+                        let weeklyProgress = dataCoordinator.weeklyProgress()
+                        Text("\(max(0, weeklyProgress.goal - weeklyProgress.completed)) min remaining")
                             .font(.caption)
                             .foregroundColor(.secondary)
                     }
@@ -184,15 +186,15 @@ struct HomeView: View {
     private func viewHistory() {
         // TODO: Navigate to sessions tab
     }
-    
+
     private func formatTimeAgo(_ date: Date) -> String {
         let calendar = Calendar.current
         let now = Date()
-        
+
         if calendar.isDateInToday(date) {
             let hours = calendar.dateComponents([.hour], from: date, to: now).hour ?? 0
             let minutes = calendar.dateComponents([.minute], from: date, to: now).minute ?? 0
-            
+
             if hours > 0 {
                 return "\(hours) hour\(hours == 1 ? "" : "s") ago"
             } else if minutes > 0 {

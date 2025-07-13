@@ -15,7 +15,7 @@ struct ProgressScreenView: View {
             WeeklyChart.DayData(day: item.day, minutes: item.minutes, isToday: item.isToday)
         }
     }
-    
+
     private var monthlyData: [MonthlyCalendar.DaySession] {
         dataCoordinator.monthlyData().map { item in
             MonthlyCalendar.DaySession(date: item.date, minutes: item.minutes, hasSession: item.hasSession)

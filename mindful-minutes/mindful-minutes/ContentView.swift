@@ -11,7 +11,7 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var dataCoordinator: MindfulDataCoordinator?
-    
+
     var body: some View {
         Group {
             if let coordinator = dataCoordinator {

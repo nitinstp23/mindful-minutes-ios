@@ -101,7 +101,6 @@ struct FilterChip: View {
     }
 }
 
-
 struct NewSessionView: View {
     @Environment(\.dismiss) private var dismiss
 

@@ -213,8 +213,6 @@ struct SessionDetailView: View {
         .padding(.vertical, MindfulSpacing.small)
     }
 
-
-
     private func repeatSession() {
         // TODO: Start a new session with same settings
     }

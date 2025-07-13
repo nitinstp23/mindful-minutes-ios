@@ -8,8 +8,6 @@ struct SessionsView: View {
     @State private var searchText = ""
     @State private var selectedSession: MeditationSession?
 
-
-
     private var filteredSessions: [MeditationSession] {
         dataCoordinator.filteredSessions(by: selectedFilter, searchText: searchText)
     }
@@ -189,7 +187,6 @@ struct SessionsView: View {
         // TODO: Implement session export
     }
 }
-
 
 #Preview {
     ContentView()

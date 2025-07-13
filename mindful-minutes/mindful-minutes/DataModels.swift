@@ -77,7 +77,7 @@ enum SessionType: String, CaseIterable, Codable {
     case custom = "Custom"
 
     var displayName: String {
-        return self.rawValue
+        self.rawValue
     }
 
     var details: String {
@@ -179,7 +179,7 @@ final class Milestone {
     }
 
     var progressText: String {
-        return "\(currentValue)/\(targetValue)"
+        "\(currentValue)/\(targetValue)"
     }
 }
 

@@ -97,7 +97,7 @@ struct FilterChip: View {
     }
 
     private var isEmpty: Bool {
-        count == 0
+        isEmpty
     }
 }
 

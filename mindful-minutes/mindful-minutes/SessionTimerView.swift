@@ -72,12 +72,17 @@ struct SessionTimerView: View {
                         Spacer()
                     }
                     
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: MindfulSpacing.small) {
+                    LazyVGrid(
+                        columns: Array(repeating: GridItem(.flexible()), count: 3),
+                        spacing: MindfulSpacing.small
+                    ) {
                         ForEach(durations, id: \.self) { duration in
-                            Button(action: {
-                                selectedDuration = duration
-                                timeRemaining = duration
-                            }) {
+                            Button(
+                                action: {
+                                    selectedDuration = duration
+                                    timeRemaining = duration
+                                },
+                                label: {
                                 Text(formatDuration(duration))
                                     .font(.body)
                                     .foregroundColor(selectedDuration == duration ? .white : .mindfulPrimary)
@@ -88,7 +93,8 @@ struct SessionTimerView: View {
                                             .fill(selectedDuration == duration ? Color.mindfulPrimary : Color.clear)
                                             .stroke(Color.mindfulPrimary, lineWidth: 1)
                                     )
-                            }
+                                }
+                            )
                         }
                     }
                 }
@@ -292,7 +298,9 @@ struct SessionTimerView: View {
             duration: TimeInterval(actualDuration),
             type: selectedType,
             notes: finalNotes.isEmpty ? notes : finalNotes,
-            tags: finalTags.isEmpty ? tags.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) } : finalTags,
+            tags: finalTags.isEmpty ? 
+                tags.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) } : 
+                finalTags,
             isCompleted: true,
             startTime: startTime,
             endTime: Date()
@@ -439,13 +447,16 @@ struct SessionCompletionView: View {
                     
                     HStack {
                         ForEach(1...5, id: \.self) { star in
-                            Button(action: {
-                                rating = star
-                            }) {
+                            Button(
+                                action: {
+                                    rating = star
+                                },
+                                label: {
                                 Image(systemName: star <= rating ? "star.fill" : "star")
                                     .font(.title2)
                                     .foregroundColor(star <= rating ? .yellow : .gray)
-                            }
+                                }
+                            )
                         }
                         Spacer()
                     }
@@ -494,7 +505,8 @@ struct SessionCompletionView: View {
             if remainingMinutes == 0 {
                 return "\(hours) hour\(hours == 1 ? "" : "s")"
             } else {
-                return "\(hours) hour\(hours == 1 ? "" : "s") \(remainingMinutes) minute\(remainingMinutes == 1 ? "" : "s")"
+                return "\(hours) hour\(hours == 1 ? "" : "s") " +
+                       "\(remainingMinutes) minute\(remainingMinutes == 1 ? "" : "s")"
             }
         }
     }

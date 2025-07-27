@@ -34,9 +34,11 @@ struct SessionsView: View {
                     Spacer()
                     HStack {
                         Spacer()
-                        Button(action: {
-                            showingNewSession = true
-                        }) {
+                        Button(
+                            action: {
+                                showingNewSession = true
+                            },
+                            label: {
                             Image(systemName: "plus")
                                 .font(.title2)
                                 .fontWeight(.medium)
@@ -45,7 +47,8 @@ struct SessionsView: View {
                                 .background(Color.mindfulPrimary)
                                 .clipShape(Circle())
                                 .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
-                        }
+                            }
+                        )
                         .padding(.trailing)
                         .padding(.bottom)
                     }
@@ -75,14 +78,17 @@ struct SessionsView: View {
             Spacer()
 
             HStack(spacing: MindfulSpacing.standard) {
-                Button(action: { showingFilterOptions = true }) {
+                Button(
+                    action: { showingFilterOptions = true },
+                    label: {
                     HStack(spacing: 4) {
                         Image(systemName: "line.3.horizontal.decrease.circle")
                         Text(selectedFilter.rawValue)
                             .font(.caption)
                     }
                     .foregroundColor(.mindfulPrimary)
-                }
+                    }
+                )
 
                 Button(action: exportSessions) {
                     Image(systemName: "square.and.arrow.up")

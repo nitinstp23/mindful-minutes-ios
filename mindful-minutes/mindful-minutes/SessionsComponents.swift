@@ -81,7 +81,7 @@ struct FilterChip: View {
         Button(action: onTap) {
             HStack(spacing: 4) {
                 Text(title)
-                if !isEmpty {
+                if count > 0 {
                     Text("(\(count))")
                         .font(.caption2)
                 }
@@ -94,10 +94,6 @@ struct FilterChip: View {
             .foregroundColor(isSelected ? .white : .primary)
             .cornerRadius(16)
         }
-    }
-
-    private var isEmpty: Bool {
-        isEmpty
     }
 }
 

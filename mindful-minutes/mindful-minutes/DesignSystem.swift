@@ -17,7 +17,7 @@ struct MindfulCard<Content: View>: View {
     var body: some View {
         content
             .padding()
-            .background(Color(.systemBackground))
+            .background(Color.mindfulBackground)
             .cornerRadius(12)
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
     }

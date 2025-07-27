@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(MindfulDataCoordinator.self) private var dataCoordinator
+    @State private var showingSessionTimer = false
 
     private var greetingText: String {
         let hour = Calendar.current.component(.hour, from: Date())

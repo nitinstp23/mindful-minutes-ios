@@ -14,22 +14,46 @@ struct SessionsView: View {
 
     var body: some View {
         NavigationView {
-            VStack(spacing: 0) {
-                headerSection
-                filterSection
+            ZStack {
+                VStack(spacing: 0) {
+                    headerSection
+                    filterSection
 
-                if filteredSessions.isEmpty {
-                    emptyStateView
-                } else {
-                    sessionsList
+                    if filteredSessions.isEmpty {
+                        emptyStateView
+                    } else {
+                        sessionsList
+                    }
+                }
+                .navigationTitle("Sessions")
+                .background(Color.mindfulBackground.ignoresSafeArea())
+                .searchable(text: $searchText, prompt: "Search sessions...")
+
+                // Floating Action Button
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            showingNewSession = true
+                        }) {
+                            Image(systemName: "plus")
+                                .font(.title2)
+                                .fontWeight(.medium)
+                                .foregroundColor(.white)
+                                .frame(width: 56, height: 56)
+                                .background(Color.mindfulPrimary)
+                                .clipShape(Circle())
+                                .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
+                        }
+                        .padding(.trailing)
+                        .padding(.bottom)
+                    }
                 }
             }
-            .navigationTitle("Sessions")
-            .background(Color.mindfulBackground.ignoresSafeArea())
-            .searchable(text: $searchText, prompt: "Search sessions...")
         }
         .sheet(isPresented: $showingNewSession) {
-            NewSessionView()
+            SessionTimerView()
         }
         .sheet(item: $selectedSession) { session in
             SessionDetailView(session: session)

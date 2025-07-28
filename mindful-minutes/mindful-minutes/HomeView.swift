@@ -22,8 +22,6 @@ struct HomeView: View {
                     todayProgressSection
                     weeklyOverviewSection
                     recentSessionsSection
-
-                    MindfulFooter()
                 }
                 .padding()
             }

@@ -31,8 +31,6 @@ struct ProgressScreenView: View {
                     timeframePicker
                     chartsSection
                     milestonesSection
-
-                    MindfulFooter()
                 }
                 .padding()
             }
@@ -167,7 +165,9 @@ struct ProgressScreenView: View {
 
             Picker("Timeframe", selection: $selectedTimeframe) {
                 ForEach(TimeFrame.allCases, id: \.self) { timeframe in
-                    Text(timeframe.rawValue).tag(timeframe)
+                    Text(timeframe.rawValue)
+                        .foregroundColor(.mindfulTextPrimary)
+                        .tag(timeframe)
                 }
             }
             .pickerStyle(SegmentedPickerStyle())

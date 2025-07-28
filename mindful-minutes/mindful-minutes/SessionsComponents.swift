@@ -91,7 +91,7 @@ struct FilterChip: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 6)
             .background(isSelected ? Color.mindfulPrimary : Color.gray.opacity(0.2))
-            .foregroundColor(isSelected ? .white : .primary)
+            .foregroundColor(isSelected ? .white : .mindfulTextPrimary)
             .cornerRadius(16)
         }
     }

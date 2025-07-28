@@ -37,11 +37,6 @@ struct SettingsView: View {
                 supportSection
                 aboutSection
 
-                Section {
-                    MindfulFooter()
-                        .listRowBackground(Color.clear)
-                        .listRowSeparator(.hidden)
-                }
             }
             .navigationTitle("Settings")
             .background(Color.mindfulBackground.ignoresSafeArea())
@@ -140,7 +135,9 @@ struct SettingsView: View {
 
                 Picker("Theme", selection: $selectedTheme) {
                     ForEach(AppTheme.allCases, id: \.self) { theme in
-                        Text(theme.rawValue).tag(theme)
+                        Text(theme.rawValue)
+                            .foregroundColor(.mindfulTextPrimary)
+                            .tag(theme)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())
@@ -161,7 +158,9 @@ struct SettingsView: View {
 
                 Picker("Text Size", selection: $selectedTextSize) {
                     ForEach(TextSize.allCases, id: \.self) { size in
-                        Text(size.rawValue).tag(size)
+                        Text(size.rawValue)
+                            .foregroundColor(.mindfulTextPrimary)
+                            .tag(size)
                     }
                 }
                 .pickerStyle(MenuPickerStyle())

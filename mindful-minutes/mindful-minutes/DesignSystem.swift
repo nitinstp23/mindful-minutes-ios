@@ -59,20 +59,6 @@ struct MindfulSpacing {
     static let large: CGFloat = 32
 }
 
-struct MindfulFooter: View {
-    var body: some View {
-        VStack(spacing: MindfulSpacing.standard) {
-            Divider()
-                .background(Color.mindfulPrimary.opacity(0.3))
-
-            Text("Made with ❤️ by MindfulLabs")
-                .font(.caption)
-                .foregroundColor(.mindfulTextSecondary)
-                .multilineTextAlignment(.center)
-        }
-        .padding(.top, MindfulSpacing.section)
-    }
-}
 
 #Preview {
     VStack(spacing: MindfulSpacing.section) {

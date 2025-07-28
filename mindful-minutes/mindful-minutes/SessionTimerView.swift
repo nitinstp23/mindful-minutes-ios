@@ -133,7 +133,9 @@ struct SessionTimerView: View {
                         ForEach(SessionType.allCases, id: \.self) { type in
                             HStack {
                                 Image(systemName: getSessionIcon(for: type))
+                                    .foregroundColor(.mindfulTextPrimary)
                                 Text(type.displayName)
+                                    .foregroundColor(.mindfulTextPrimary)
                             }
                             .tag(type)
                         }

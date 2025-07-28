@@ -5,18 +5,16 @@ struct SessionsView: View {
     @State private var selectedFilter: SessionFilter = .all
     @State private var showingNewSession = false
     @State private var showingFilterOptions = false
-    @State private var searchText = ""
     @State private var selectedSession: MeditationSession?
 
     private var filteredSessions: [MeditationSession] {
-        dataCoordinator.filteredSessions(by: selectedFilter, searchText: searchText)
+        dataCoordinator.filteredSessions(by: selectedFilter)
     }
 
     var body: some View {
         NavigationView {
             ZStack {
                 VStack(spacing: 0) {
-                    headerSection
                     filterSection
 
                     if filteredSessions.isEmpty {
@@ -25,9 +23,10 @@ struct SessionsView: View {
                         sessionsList
                     }
                 }
-                .navigationTitle("Sessions")
+                .navigationTitle("Your Sessions")
+                .font(.title2)
+                .fontWeight(.regular)
                 .background(Color.mindfulBackground.ignoresSafeArea())
-                .searchable(text: $searchText, prompt: "Search sessions...")
 
                 // Floating Action Button
                 VStack {
@@ -73,32 +72,6 @@ struct SessionsView: View {
         }
     }
 
-    private var headerSection: some View {
-        HStack {
-            Spacer()
-
-            HStack(spacing: MindfulSpacing.standard) {
-                Button(
-                    action: { showingFilterOptions = true },
-                    label: {
-                    HStack(spacing: 4) {
-                        Image(systemName: "line.3.horizontal.decrease.circle")
-                        Text(selectedFilter.rawValue)
-                            .font(.caption)
-                    }
-                    .foregroundColor(.mindfulPrimary)
-                    }
-                )
-
-                Button(action: exportSessions) {
-                    Image(systemName: "square.and.arrow.up")
-                        .foregroundColor(.mindfulPrimary)
-                }
-            }
-        }
-        .padding()
-    }
-
     private var filterSection: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: MindfulSpacing.small) {
@@ -134,11 +107,6 @@ struct SessionsView: View {
                 }
             }
 
-            Section {
-                MindfulFooter()
-                    .listRowBackground(Color.clear)
-                    .listRowSeparator(.hidden)
-            }
         }
         .listStyle(PlainListStyle())
     }
@@ -162,20 +130,13 @@ struct SessionsView: View {
                     .multilineTextAlignment(.center)
             }
 
-            MindfulButton(title: "View All Sessions", action: { selectedFilter = .all }, style: .primary)
-                .frame(maxWidth: 200)
-
-            MindfulFooter()
-
             Spacer()
         }
         .padding()
     }
 
     private var emptyStateMessage: String {
-        if !searchText.isEmpty {
-            return "Try adjusting your search terms or filters"
-        } else if selectedFilter != .all {
+        if selectedFilter != .all {
             return "No sessions match the current filter"
         } else {
             return "Your mindfulness journey sessions will appear here"
@@ -211,10 +172,6 @@ struct SessionsView: View {
             formatter.dateFormat = "MMMM d, yyyy"
             return formatter.string(from: date)
         }
-    }
-
-    private func exportSessions() {
-        // TODO: Implement session export
     }
 }
 

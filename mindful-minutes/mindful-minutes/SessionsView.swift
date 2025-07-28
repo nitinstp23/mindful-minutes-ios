@@ -3,7 +3,6 @@ import SwiftUI
 struct SessionsView: View {
     @Environment(MindfulDataCoordinator.self) private var dataCoordinator
     @State private var selectedFilter: SessionFilter = .all
-    @State private var showingNewSession = false
     @State private var showingFilterOptions = false
     @State private var selectedSession: MeditationSession?
 
@@ -13,47 +12,17 @@ struct SessionsView: View {
 
     var body: some View {
         NavigationView {
-            ZStack {
-                VStack(spacing: 0) {
-                    filterSection
+            VStack(spacing: 0) {
+                filterSection
 
-                    if filteredSessions.isEmpty {
-                        emptyStateView
-                    } else {
-                        sessionsList
-                    }
-                }
-                .navigationTitle("Your Sessions")
-                .background(Color.mindfulBackground.ignoresSafeArea())
-
-                // Floating Action Button
-                VStack {
-                    Spacer()
-                    HStack {
-                        Spacer()
-                        Button(
-                            action: {
-                                showingNewSession = true
-                            },
-                            label: {
-                            Image(systemName: "plus")
-                                .font(.title2)
-                                .fontWeight(.medium)
-                                .foregroundColor(.white)
-                                .frame(width: 56, height: 56)
-                                .background(Color.mindfulPrimary)
-                                .clipShape(Circle())
-                                .shadow(color: .black.opacity(0.2), radius: 4, x: 0, y: 2)
-                            }
-                        )
-                        .padding(.trailing)
-                        .padding(.bottom)
-                    }
+                if filteredSessions.isEmpty {
+                    emptyStateView
+                } else {
+                    sessionsList
                 }
             }
-        }
-        .sheet(isPresented: $showingNewSession) {
-            SessionTimerView()
+            .navigationTitle("Your Sessions")
+            .background(Color.mindfulBackground.ignoresSafeArea())
         }
         .sheet(item: $selectedSession) { session in
             SessionDetailView(session: session)

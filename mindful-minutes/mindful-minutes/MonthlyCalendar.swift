@@ -73,7 +73,7 @@ struct MonthlyCalendar: View {
                         Text(dayLetter)
                             .font(.caption2)
                             .fontWeight(.semibold)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                             .frame(maxWidth: .infinity)
                     }
                 }
@@ -108,7 +108,7 @@ struct MonthlyCalendar: View {
                 .fill(color)
                 .frame(width: 8, height: 8)
             Text(text)
-                .foregroundColor(.secondary)
+                .foregroundColor(.mindfulTextSecondary)
         }
     }
 }

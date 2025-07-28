@@ -158,7 +158,7 @@ struct SessionsView: View {
 
                 Text(emptyStateMessage)
                     .font(.body)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
                     .multilineTextAlignment(.center)
             }
 

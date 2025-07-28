@@ -5,6 +5,8 @@ extension Color {
     static let mindfulSecondary = Color(red: 0.078, green: 0.722, blue: 0.651)
     static let mindfulBackground = Color(red: 0.941, green: 0.992, blue: 0.957)
     static let mindfulBackgroundSecondary = Color(red: 0.925, green: 0.992, blue: 0.961)
+    static let mindfulTextPrimary = Color.black
+    static let mindfulTextSecondary = Color.black.opacity(0.6)
 }
 
 struct MindfulCard<Content: View>: View {
@@ -65,7 +67,7 @@ struct MindfulFooter: View {
 
             Text("Made with ❤️ by MindfulLabs")
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.mindfulTextSecondary)
                 .multilineTextAlignment(.center)
         }
         .padding(.top, MindfulSpacing.section)
@@ -80,7 +82,7 @@ struct MindfulFooter: View {
                     .font(.headline)
                 Text("This is a sample card with the design system")
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
             }
         }
 

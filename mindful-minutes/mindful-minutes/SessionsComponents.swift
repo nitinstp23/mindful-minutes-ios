@@ -25,7 +25,7 @@ struct SessionRow: View {
                     HStack {
                         Text(session.type.rawValue)
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.mindfulTextPrimary)
 
                         Spacer()
 
@@ -38,7 +38,7 @@ struct SessionRow: View {
                     HStack {
                         Text(session.date, style: .time)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
 
                         if !session.notes.isEmpty {
                             Image(systemName: "note.text")
@@ -62,7 +62,7 @@ struct SessionRow: View {
 
                 Image(systemName: "chevron.right")
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
             }
         }
         .buttonStyle(PlainButtonStyle())
@@ -106,7 +106,7 @@ struct NewSessionView: View {
                 Text("New Session Screen")
                     .font(.title)
                 Text("Session creation form coming soon")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
             }
             .navigationTitle("New Session")
             .toolbar {

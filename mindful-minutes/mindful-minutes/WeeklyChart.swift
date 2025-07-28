@@ -15,6 +15,7 @@ struct WeeklyChart: View {
             HStack {
                 Text("Weekly Progress")
                     .font(.headline)
+                    .foregroundColor(.mindfulTextPrimary)
                 Spacer()
                 Text("\(weeklyData.reduce(0) { $0 + $1.minutes }) min total")
                     .font(.subheadline)
@@ -45,11 +46,11 @@ struct WeeklyChart: View {
             HStack {
                 Text("0 min")
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
                 Spacer()
                 Text("\(maxMinutes) min")
                     .font(.caption2)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
             }
         }
     }

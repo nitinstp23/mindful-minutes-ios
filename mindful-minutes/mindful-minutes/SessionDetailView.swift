@@ -64,11 +64,11 @@ struct SessionDetailView: View {
 
                         Text(session.date, style: .date)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
 
                         Text(session.date, style: .time)
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
 
                     Spacer()
@@ -80,7 +80,7 @@ struct SessionDetailView: View {
                     VStack {
                         Text("Duration")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                         Text(session.formattedDuration)
                             .font(.title2)
                             .fontWeight(.bold)
@@ -94,7 +94,7 @@ struct SessionDetailView: View {
                     VStack {
                         Text("Session #")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                         Text("\(session.sessionNumber ?? 0)")
                             .font(.title2)
                             .fontWeight(.bold)
@@ -165,7 +165,7 @@ struct SessionDetailView: View {
 
                 Text(session.notes)
                     .font(.body)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.mindfulTextPrimary)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
@@ -206,7 +206,7 @@ struct SessionDetailView: View {
 
             Text(title)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.mindfulTextSecondary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)

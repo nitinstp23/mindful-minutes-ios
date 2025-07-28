@@ -22,8 +22,9 @@ struct ProfileEditView: View {
             VStack {
                 Text("Profile Edit Screen")
                     .font(.title)
+                    .foregroundColor(.mindfulTextPrimary)
                 Text("Profile editing form coming soon")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
             }
             .navigationTitle("Edit Profile")
             .toolbar {
@@ -45,8 +46,9 @@ struct DataExportView: View {
             VStack {
                 Text("Data Export Screen")
                     .font(.title)
+                    .foregroundColor(.mindfulTextPrimary)
                 Text("Data export options coming soon")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
             }
             .navigationTitle("Export Data")
             .toolbar {

@@ -155,7 +155,7 @@ struct SessionTimerView: View {
 
                     Text(selectedType.displayName)
                         .font(.headline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
 
                     Text(formatTime(timeRemaining))
                         .font(.system(size: dynamicTimerFontSize, weight: .light, design: .monospaced))
@@ -183,7 +183,7 @@ struct SessionTimerView: View {
                     if !isRunning && timeRemaining < selectedDuration {
                         Text("Session paused")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
                 .padding(.vertical)
@@ -449,7 +449,7 @@ struct SessionCompletionView: View {
 
             Text("You completed a \(formatDuration(duration)) \(type.displayName.lowercased()) session")
                 .font(.body)
-                .foregroundColor(.secondary)
+                .foregroundColor(.mindfulTextSecondary)
                 .multilineTextAlignment(.center)
         }
     }

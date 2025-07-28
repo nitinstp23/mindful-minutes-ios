@@ -48,6 +48,7 @@ struct ProgressScreenView: View {
                     .foregroundColor(.orange)
                 Text("Streaks")
                     .font(.headline)
+                    .foregroundColor(.mindfulTextPrimary)
                 Spacer()
             }
 
@@ -60,7 +61,7 @@ struct ProgressScreenView: View {
 
                         Text("Current")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
 
                         Text("\(dataCoordinator.currentStreak)")
                             .font(.title)
@@ -69,7 +70,7 @@ struct ProgressScreenView: View {
 
                         Text(dataCoordinator.currentStreak == 1 ? "day" : "days")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -82,7 +83,7 @@ struct ProgressScreenView: View {
 
                         Text("Best")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
 
                         Text("\(dataCoordinator.longestStreak)")
                             .font(.title)
@@ -91,7 +92,7 @@ struct ProgressScreenView: View {
 
                         Text(dataCoordinator.longestStreak == 1 ? "day" : "days")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                     .frame(maxWidth: .infinity)
                 }
@@ -107,6 +108,7 @@ struct ProgressScreenView: View {
                         .foregroundColor(.mindfulPrimary)
                     Text("Overall Statistics")
                         .font(.headline)
+                        .foregroundColor(.mindfulTextPrimary)
                     Spacer()
                 }
 
@@ -148,7 +150,7 @@ struct ProgressScreenView: View {
 
             Text(title)
                 .font(.caption)
-                .foregroundColor(.secondary)
+                .foregroundColor(.mindfulTextSecondary)
                 .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
@@ -159,6 +161,7 @@ struct ProgressScreenView: View {
         HStack {
             Text("Analytics")
                 .font(.headline)
+                .foregroundColor(.mindfulTextPrimary)
 
             Spacer()
 
@@ -189,6 +192,7 @@ struct ProgressScreenView: View {
                         HStack {
                             Text("Yearly Overview")
                                 .font(.headline)
+                                .foregroundColor(.mindfulTextPrimary)
                             Spacer()
                             Text("2024")
                                 .font(.subheadline)
@@ -197,7 +201,7 @@ struct ProgressScreenView: View {
                         }
 
                         Text("Year chart coming soon")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                             .frame(height: 120)
 
                         HStack {
@@ -221,6 +225,7 @@ struct ProgressScreenView: View {
                         .foregroundColor(.yellow)
                     Text("Milestones")
                         .font(.headline)
+                        .foregroundColor(.mindfulTextPrimary)
                     Spacer()
                 }
 
@@ -255,11 +260,11 @@ struct ProgressScreenView: View {
                 Text(title)
                     .font(.subheadline)
                     .fontWeight(.medium)
-                    .foregroundColor(isCompleted ? .secondary : .primary)
+                    .foregroundColor(isCompleted ? .mindfulTextSecondary : .mindfulTextPrimary)
 
                 Text(description)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
 
                 if !isCompleted && total > 0 {
                     ProgressView(value: Double(min(progress, total)), total: Double(total))

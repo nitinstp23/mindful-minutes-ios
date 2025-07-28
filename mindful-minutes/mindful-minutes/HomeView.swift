@@ -36,10 +36,11 @@ struct HomeView: View {
             Text("\(greetingText), Nitin")
                 .font(.title2)
                 .fontWeight(.medium)
+                .foregroundColor(.mindfulTextPrimary)
 
             Text("Track your meditation journey 🪷")
                 .font(.subheadline)
-                .foregroundColor(.secondary)
+                .foregroundColor(.mindfulTextSecondary)
         }
         .padding(.top)
     }
@@ -52,12 +53,14 @@ struct HomeView: View {
                         .foregroundColor(.mindfulPrimary)
                     Text("Today's Progress")
                         .font(.headline)
+                        .foregroundColor(.mindfulTextPrimary)
                     Spacer()
                 }
 
                 VStack(spacing: MindfulSpacing.small) {
                     HStack {
                         Text("Minutes meditated:")
+                            .foregroundColor(.mindfulTextPrimary)
                         Spacer()
                         Text("\(dataCoordinator.todaysMinutes) min")
                             .fontWeight(.medium)
@@ -66,6 +69,7 @@ struct HomeView: View {
 
                     HStack {
                         Text("Sessions completed:")
+                            .foregroundColor(.mindfulTextPrimary)
                         Spacer()
                         Text("\(dataCoordinator.todaysSessionCount)")
                             .fontWeight(.medium)
@@ -75,6 +79,7 @@ struct HomeView: View {
                     if dataCoordinator.todaysMinutes > 0 {
                         HStack {
                             Text("Average session:")
+                                .foregroundColor(.mindfulTextPrimary)
                             Spacer()
                             Text("\(dataCoordinator.todaysMinutes / max(dataCoordinator.todaysSessionCount, 1)) min")
                                 .fontWeight(.medium)
@@ -94,12 +99,14 @@ struct HomeView: View {
                         .foregroundColor(.mindfulPrimary)
                     Text("Weekly Goal")
                         .font(.headline)
+                        .foregroundColor(.mindfulTextPrimary)
                     Spacer()
                 }
 
                 VStack(spacing: MindfulSpacing.small) {
                     HStack {
                         Text("Progress:")
+                            .foregroundColor(.mindfulTextPrimary)
                         Spacer()
                         let progress = dataCoordinator.weeklyProgress()
                         Text("\(progress.completed) / \(progress.goal) min")
@@ -114,12 +121,12 @@ struct HomeView: View {
                     HStack {
                         Text("\(Int(dataCoordinator.weeklyProgress().percentage * 100))% complete")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                         Spacer()
                         let weeklyProgress = dataCoordinator.weeklyProgress()
                         Text("\(max(0, weeklyProgress.goal - weeklyProgress.completed)) min remaining")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -134,6 +141,7 @@ struct HomeView: View {
                         .foregroundColor(.mindfulPrimary)
                     Text("Recent Sessions")
                         .font(.headline)
+                        .foregroundColor(.mindfulTextPrimary)
                     Spacer()
                     Button("View All") {
                         viewHistory()
@@ -147,7 +155,7 @@ struct HomeView: View {
                     if recentSessions.isEmpty {
                         Text("No sessions yet")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                             .padding(.vertical)
                     } else {
                         ForEach(recentSessions, id: \.id) { session in
@@ -169,9 +177,10 @@ struct HomeView: View {
                 Text(type)
                     .font(.subheadline)
                     .fontWeight(.medium)
+                    .foregroundColor(.mindfulTextPrimary)
                 Text(timeAgo)
                     .font(.caption)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.mindfulTextSecondary)
             }
 
             Spacer()

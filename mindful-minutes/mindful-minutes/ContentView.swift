@@ -20,24 +20,28 @@ struct ContentView: View {
                         .tabItem {
                             Image(systemName: "house.fill")
                             Text("Home")
+                                .foregroundColor(.mindfulTextPrimary)
                         }
 
                     ProgressScreenView()
                         .tabItem {
                             Image(systemName: "chart.line.uptrend.xyaxis")
                             Text("Progress")
+                                .foregroundColor(.mindfulTextPrimary)
                         }
 
                     SessionsView()
                         .tabItem {
                             Image(systemName: "figure.mind.and.body")
                             Text("Sessions")
+                                .foregroundColor(.mindfulTextPrimary)
                         }
 
                     SettingsView()
                         .tabItem {
                             Image(systemName: "gear")
                             Text("Settings")
+                                .foregroundColor(.mindfulTextPrimary)
                         }
                 }
                 .environment(coordinator)
@@ -45,6 +49,7 @@ struct ContentView: View {
                 .background(Color.mindfulBackground.ignoresSafeArea())
             } else {
                 ProgressView("Loading...")
+                    .foregroundColor(.mindfulTextPrimary)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.mindfulBackground.ignoresSafeArea())
             }

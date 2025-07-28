@@ -65,11 +65,11 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Nitin Misra")
                             .font(.headline)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.mindfulTextPrimary)
 
                         Text("nitin@example.com")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
 
                         Text("Member since December 2024")
                             .font(.caption)
@@ -80,7 +80,7 @@ struct SettingsView: View {
 
                     Image(systemName: "chevron.right")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
                 .padding(.vertical, 4)
             }
@@ -98,7 +98,7 @@ struct SettingsView: View {
                         .font(.body)
                     Text("\(weeklyGoal) minutes per week")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
 
                 Spacer()
@@ -116,7 +116,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Set custom schedules")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -133,7 +133,7 @@ struct SettingsView: View {
                         .font(.body)
                     Text(selectedTheme.rawValue)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
 
                 Spacer()
@@ -154,7 +154,7 @@ struct SettingsView: View {
                         .font(.body)
                     Text(selectedTextSize.rawValue)
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
 
                 Spacer()
@@ -175,7 +175,7 @@ struct SettingsView: View {
                         .font(.body)
                     Text("Bell chimes and ambient sounds")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
 
                 Spacer()
@@ -192,7 +192,7 @@ struct SettingsView: View {
                         .font(.body)
                     Text("Vibration for interactions")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
 
                 Spacer()
@@ -213,7 +213,7 @@ struct SettingsView: View {
                         .font(.body)
                     Text(notificationsEnabled ? "Enabled" : "Disabled")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
 
                 Spacer()
@@ -231,7 +231,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text(reminderTime, style: .time)
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
 
                     Spacer()
@@ -250,7 +250,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Customize all notifications")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -268,7 +268,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("VoiceOver, high contrast")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -282,7 +282,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Minimize animations")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -298,17 +298,17 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Export Data")
                             .font(.body)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.mindfulTextPrimary)
                         Text("Download your meditation data")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
 
                     Spacer()
 
                     Image(systemName: "chevron.right")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
             }
             .buttonStyle(PlainButtonStyle())
@@ -322,7 +322,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Backup and sync across devices")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -336,7 +336,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Data usage and permissions")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -354,7 +354,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Common questions and answers")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -368,7 +368,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Get help from our team")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -380,17 +380,17 @@ struct SettingsView: View {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("Rate Mindful Minutes")
                             .font(.body)
-                            .foregroundColor(.primary)
+                            .foregroundColor(.mindfulTextPrimary)
                         Text("Share your experience")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
 
                     Spacer()
 
                     Image(systemName: "chevron.right")
                         .font(.caption)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
             }
             .buttonStyle(PlainButtonStyle())
@@ -407,7 +407,7 @@ struct SettingsView: View {
                         .font(.body)
                     Text("1.0.0 (Build 42)")
                         .font(.subheadline)
-                        .foregroundColor(.secondary)
+                        .foregroundColor(.mindfulTextSecondary)
                 }
             }
 
@@ -420,7 +420,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("How we protect your data")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -434,7 +434,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Usage terms and conditions")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }
@@ -448,7 +448,7 @@ struct SettingsView: View {
                             .font(.body)
                         Text("Open source libraries and credits")
                             .font(.subheadline)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(.mindfulTextSecondary)
                     }
                 }
             }

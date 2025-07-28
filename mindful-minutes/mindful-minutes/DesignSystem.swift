@@ -59,7 +59,6 @@ struct MindfulSpacing {
     static let large: CGFloat = 32
 }
 
-
 #Preview {
     VStack(spacing: MindfulSpacing.section) {
         MindfulCard {

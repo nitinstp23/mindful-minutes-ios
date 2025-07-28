@@ -61,7 +61,6 @@ struct MindfulMinutesApp: App {
         UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
         UISegmentedControl.appearance().backgroundColor = UIColor(Color.mindfulBackground)
         
-        
         // Configure other UI elements
         UITableView.appearance().backgroundColor = UIColor(Color.mindfulBackground)
         UIScrollView.appearance().backgroundColor = UIColor(Color.mindfulBackground)

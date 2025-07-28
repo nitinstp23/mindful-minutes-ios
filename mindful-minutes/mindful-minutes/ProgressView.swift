@@ -34,7 +34,7 @@ struct ProgressScreenView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Progress")
+            .navigationTitle("Your Progress")
             .background(Color.mindfulBackground.ignoresSafeArea())
         }
     }
@@ -115,8 +115,8 @@ struct ProgressScreenView: View {
                     GridItem(.flexible())
                 ], spacing: MindfulSpacing.standard) {
                     statItem(
-                        title: "Total Sessions", 
-                        value: "\(dataCoordinator.totalSessions)", 
+                        title: "Total Sessions",
+                        value: "\(dataCoordinator.totalSessions)",
                         icon: "figure.mind.and.body"
                     )
                     statItem(title: "Total Minutes", value: "\(dataCoordinator.totalMinutes)", icon: "clock.fill")
@@ -126,8 +126,8 @@ struct ProgressScreenView: View {
                         icon: "chart.line.uptrend.xyaxis"
                     )
                     statItem(
-                        title: "This Month", 
-                        value: "\(dataCoordinator.monthlyData().filter { $0.hasSession }.count) sessions", 
+                        title: "This Month",
+                        value: "\(dataCoordinator.monthlyData().filter { $0.hasSession }.count) sessions",
                         icon: "calendar"
                     )
                 }

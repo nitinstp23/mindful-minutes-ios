@@ -24,8 +24,6 @@ struct SessionsView: View {
                     }
                 }
                 .navigationTitle("Your Sessions")
-                .font(.title2)
-                .fontWeight(.regular)
                 .background(Color.mindfulBackground.ignoresSafeArea())
 
                 // Floating Action Button
@@ -98,6 +96,7 @@ struct SessionsView: View {
                         SessionRow(session: session) {
                             selectedSession = session
                         }
+                        .listRowBackground(Color.clear)
                     }
                 } header: {
                     Text(formatSectionDate(group.date))
@@ -109,6 +108,8 @@ struct SessionsView: View {
 
         }
         .listStyle(PlainListStyle())
+        .scrollContentBackground(.hidden)
+        .background(Color.mindfulBackground)
     }
 
     private var emptyStateView: some View {

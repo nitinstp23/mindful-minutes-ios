@@ -26,6 +26,7 @@ struct ProgressScreenView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: MindfulSpacing.section) {
+                    headerSection
                     streaksSection
                     overallStatsSection
                     timeframePicker
@@ -34,9 +35,23 @@ struct ProgressScreenView: View {
                 }
                 .padding()
             }
-            .navigationTitle("Your Progress")
+            .navigationBarHidden(true)
             .background(Color.mindfulBackground.ignoresSafeArea())
         }
+    }
+
+    private var headerSection: some View {
+        VStack(spacing: MindfulSpacing.small) {
+            Text("Your Progress")
+                .font(.title2)
+                .fontWeight(.medium)
+                .foregroundColor(.mindfulTextPrimary)
+
+            Text("Track your mindfulness journey")
+                .font(.subheadline)
+                .foregroundColor(.mindfulTextSecondary)
+        }
+        .padding(.top)
     }
 
     private var streaksSection: some View {

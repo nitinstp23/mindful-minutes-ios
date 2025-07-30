@@ -27,16 +27,20 @@ struct SettingsView: View {
 
     var body: some View {
         NavigationView {
-            List {
-                profileSection
-                notificationsSection
-                supportSection
-                aboutSection
-
+            VStack(spacing: 0) {
+                headerSection
+                
+                List {
+                    profileSection
+                    notificationsSection
+                    supportSection
+                    aboutSection
+                }
+                .listStyle(PlainListStyle())
+                .scrollContentBackground(.hidden)
+                .background(Color.mindfulBackground.ignoresSafeArea())
             }
-            .listStyle(PlainListStyle())
-            .scrollContentBackground(.hidden)
-            .navigationTitle("Settings")
+            .navigationBarHidden(true)
             .background(Color.mindfulBackground.ignoresSafeArea())
         }
         .sheet(isPresented: $showingProfileEdit) {
@@ -45,6 +49,22 @@ struct SettingsView: View {
         .sheet(isPresented: $showingDataExport) {
             DataExportView()
         }
+    }
+
+    private var headerSection: some View {
+        VStack(spacing: MindfulSpacing.small) {
+            Text("Settings")
+                .font(.title2)
+                .fontWeight(.medium)
+                .foregroundColor(.mindfulTextPrimary)
+
+            Text("Customize your meditation experience")
+                .font(.subheadline)
+                .foregroundColor(.mindfulTextSecondary)
+        }
+        .padding(.top)
+        .padding(.horizontal)
+        .padding(.bottom, MindfulSpacing.small)
     }
 
     private var profileSection: some View {

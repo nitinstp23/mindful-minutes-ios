@@ -13,6 +13,7 @@ struct SessionsView: View {
     var body: some View {
         NavigationView {
             VStack(spacing: 0) {
+                headerSection
                 filterSection
 
                 if filteredSessions.isEmpty {
@@ -21,7 +22,7 @@ struct SessionsView: View {
                     sessionsList
                 }
             }
-            .navigationTitle("Your Sessions")
+            .navigationBarHidden(true)
             .background(Color.mindfulBackground.ignoresSafeArea())
         }
         .sheet(item: $selectedSession) { session in
@@ -37,6 +38,22 @@ struct SessionsView: View {
                 } + [.cancel()]
             )
         }
+    }
+
+    private var headerSection: some View {
+        VStack(spacing: MindfulSpacing.small) {
+            Text("Your Sessions")
+                .font(.title2)
+                .fontWeight(.medium)
+                .foregroundColor(.mindfulTextPrimary)
+
+            Text("Review your meditation history")
+                .font(.subheadline)
+                .foregroundColor(.mindfulTextSecondary)
+        }
+        .padding(.top)
+        .padding(.horizontal)
+        .padding(.bottom, MindfulSpacing.small)
     }
 
     private var filterSection: some View {

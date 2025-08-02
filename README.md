@@ -193,8 +193,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🏢 About
 
-**Made with ❤️ by MindfulLabs**
-
 Part of the Mindful Minutes ecosystem:
 - [Web App](https://github.com/nitinstp23/mindful-minutes-web) - Next.js web application
 - [API](https://github.com/nitinstp23/mindful-minutes-api) - Go backend service

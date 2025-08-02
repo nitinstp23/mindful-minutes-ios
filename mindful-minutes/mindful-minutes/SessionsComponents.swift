@@ -7,59 +7,49 @@ struct SessionGroup {
 
 struct SessionRow: View {
     let session: MeditationSession
-    let onTap: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: MindfulSpacing.standard) {
-                VStack {
-                    Image(systemName: session.sessionTypeIcon)
-                        .font(.title2)
+        HStack(spacing: MindfulSpacing.standard) {
+            VStack {
+                Image(systemName: session.sessionTypeIcon)
+                    .font(.title2)
+                    .foregroundColor(.mindfulPrimary)
+                    .frame(width: 40, height: 40)
+                    .background(Color.mindfulPrimary.opacity(0.1))
+                    .cornerRadius(8)
+            }
+
+            VStack(alignment: .leading, spacing: 4) {
+                HStack {
+                    Text(session.type.rawValue)
+                        .font(.headline)
+                        .foregroundColor(.mindfulTextPrimary)
+
+                    Spacer()
+
+                    Text(session.formattedDuration)
+                        .font(.headline)
+                        .fontWeight(.medium)
                         .foregroundColor(.mindfulPrimary)
-                        .frame(width: 40, height: 40)
-                        .background(Color.mindfulPrimary.opacity(0.1))
-                        .cornerRadius(8)
                 }
 
-                VStack(alignment: .leading, spacing: 4) {
-                    HStack {
-                        Text(session.type.rawValue)
-                            .font(.headline)
-                            .foregroundColor(.mindfulTextPrimary)
+                HStack {
+                    Text(session.date, style: .time)
+                        .font(.subheadline)
+                        .foregroundColor(.mindfulTextSecondary)
 
-                        Spacer()
-
-                        Text(session.formattedDuration)
-                            .font(.headline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.mindfulPrimary)
+                    if !session.notes.isEmpty {
+                        Image(systemName: "note.text")
+                            .font(.caption)
+                            .foregroundColor(.mindfulSecondary)
                     }
 
-                    HStack {
-                        Text(session.date, style: .time)
-                            .font(.subheadline)
-                            .foregroundColor(.mindfulTextSecondary)
+                    Spacer()
 
-                        if !session.notes.isEmpty {
-                            Image(systemName: "note.text")
-                                .font(.caption)
-                                .foregroundColor(.mindfulSecondary)
-                        }
-
-                        Spacer()
-
-                    }
                 }
-
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.mindfulTextSecondary)
             }
         }
-        .buttonStyle(PlainButtonStyle())
-        .padding(.vertical, 4)
     }
-
 }
 
 struct FilterChip: View {

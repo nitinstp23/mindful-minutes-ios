@@ -4,7 +4,6 @@ struct SessionsView: View {
     @Environment(MindfulDataCoordinator.self) private var dataCoordinator
     @State private var selectedFilter: SessionFilter = .all
     @State private var showingFilterOptions = false
-    @State private var selectedSession: MeditationSession?
 
     private var filteredSessions: [MeditationSession] {
         dataCoordinator.filteredSessions(by: selectedFilter)
@@ -24,9 +23,6 @@ struct SessionsView: View {
             }
             .navigationBarHidden(true)
             .background(Color.mindfulBackground.ignoresSafeArea())
-        }
-        .sheet(item: $selectedSession) { session in
-            SessionDetailView(session: session)
         }
         .actionSheet(isPresented: $showingFilterOptions) {
             ActionSheet(
@@ -79,9 +75,7 @@ struct SessionsView: View {
             ForEach(groupSessionsByDate(filteredSessions), id: \.date) { group in
                 Section {
                     ForEach(group.sessions) { session in
-                        SessionRow(session: session) {
-                            selectedSession = session
-                        }
+                        SessionRow(session: session)
                         .listRowBackground(Color.clear)
                     }
                 } header: {

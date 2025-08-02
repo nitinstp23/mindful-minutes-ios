@@ -8,7 +8,6 @@ final class MeditationSession {
     var duration: TimeInterval // in seconds
     var type: SessionType
     var notes: String
-    var tags: [String]
     var isCompleted: Bool
     var startTime: Date?
     var endTime: Date?
@@ -20,7 +19,6 @@ final class MeditationSession {
         duration: TimeInterval = 0,
         type: SessionType = .mindfulness,
         notes: String = "",
-        tags: [String] = [],
         isCompleted: Bool = false,
         startTime: Date? = nil,
         endTime: Date? = nil,
@@ -31,7 +29,6 @@ final class MeditationSession {
         self.duration = duration
         self.type = type
         self.notes = notes
-        self.tags = tags
         self.isCompleted = isCompleted
         self.startTime = startTime
         self.endTime = endTime
@@ -78,27 +75,6 @@ enum SessionType: String, CaseIterable, Codable {
 
     var displayName: String {
         self.rawValue
-    }
-
-    var details: String {
-        switch self {
-        case .mindfulness:
-            return "Present moment awareness and observation"
-        case .breathing:
-            return "Focused attention on breath patterns"
-        case .bodyScan:
-            return "Progressive relaxation through body awareness"
-        case .lovingKindness:
-            return "Cultivating compassion and goodwill"
-        case .focus:
-            return "Concentrated attention training"
-        case .movement:
-            return "Mindful movement and gentle yoga"
-        case .sleep:
-            return "Relaxation and sleep preparation"
-        case .custom:
-            return "Personalized meditation practice"
-        }
     }
 }
 

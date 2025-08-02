@@ -127,27 +127,6 @@ struct SessionDetailView: View {
                     statItem(title: "Calm Level", value: "High", icon: "leaf.fill")
                 }
 
-                if !session.tags.isEmpty {
-                    VStack(alignment: .leading, spacing: MindfulSpacing.small) {
-                        Text("Tags")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-
-                        LazyVGrid(columns: [
-                            GridItem(.adaptive(minimum: 80))
-                        ], spacing: 8) {
-                            ForEach(session.tags, id: \.self) { tag in
-                                Text(tag)
-                                    .font(.caption)
-                                    .padding(.horizontal, 8)
-                                    .padding(.vertical, 4)
-                                    .background(Color.mindfulPrimary.opacity(0.1))
-                                    .foregroundColor(.mindfulPrimary)
-                                    .cornerRadius(6)
-                            }
-                        }
-                    }
-                }
             }
         }
     }
@@ -229,7 +208,6 @@ struct SessionDetailView: View {
         type: .mindfulness,
         notes: "Today's session was particularly peaceful. I focused on breath awareness and managed to " +
                "maintain concentration for most of the session. Feeling much more centered and ready for the day ahead.",
-        tags: ["morning", "peaceful", "focused"],
         sessionNumber: 42
     )
 

@@ -163,7 +163,6 @@ class MindfulDataCoordinator {
                 duration: 900,
                 type: .mindfulness,
                 notes: "Great session today",
-                tags: ["morning", "peaceful"],
                 isCompleted: true
             ),
             MeditationSession(
@@ -171,7 +170,6 @@ class MindfulDataCoordinator {
                 duration: 600,
                 type: .breathing,
                 notes: "",
-                tags: ["quick"],
                 isCompleted: true
             ),
             MeditationSession(
@@ -179,7 +177,6 @@ class MindfulDataCoordinator {
                 duration: 1200,
                 type: .bodyScan,
                 notes: "Deep relaxation session",
-                tags: ["evening", "relaxing"],
                 isCompleted: true
             ),
             MeditationSession(
@@ -187,7 +184,6 @@ class MindfulDataCoordinator {
                 duration: 480,
                 type: .mindfulness,
                 notes: "",
-                tags: ["morning"],
                 isCompleted: true
             ),
             MeditationSession(
@@ -195,7 +191,6 @@ class MindfulDataCoordinator {
                 duration: 1800,
                 type: .lovingKindness,
                 notes: "Focused on compassion",
-                tags: ["evening", "compassion"],
                 isCompleted: true
             )
         ]

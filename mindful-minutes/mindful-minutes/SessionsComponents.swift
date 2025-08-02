@@ -48,15 +48,6 @@ struct SessionRow: View {
 
                         Spacer()
 
-                        if !session.tags.isEmpty {
-                            Text(session.tags.first ?? "")
-                                .font(.caption)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.mindfulPrimary.opacity(0.1))
-                                .foregroundColor(.mindfulPrimary)
-                                .cornerRadius(4)
-                        }
                     }
                 }
 

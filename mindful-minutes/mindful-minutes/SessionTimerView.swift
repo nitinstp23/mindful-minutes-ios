@@ -24,7 +24,7 @@ struct SessionTimerView: View {
         NavigationView {
             VStack(spacing: MindfulSpacing.section) {
                 headerSection
-                
+
                 if !isRunning && sessionStartTime == nil {
                     setupSection
                         .transition(.asymmetric(
@@ -91,9 +91,9 @@ struct SessionTimerView: View {
                 dismiss()
             }
             .foregroundColor(.mindfulPrimary)
-            
+
             Spacer()
-            
+
             VStack(spacing: MindfulSpacing.small) {
                 Text(isRunning ? "Meditating" : "New Session")
                     .font(.title2)
@@ -101,7 +101,7 @@ struct SessionTimerView: View {
                     .foregroundColor(.mindfulTextPrimary)
 
                 if !isRunning && sessionStartTime == nil {
-                    Text(selectedWarmupSeconds > 0 ? "Start with warm-up preparation" : "Start your mindful practice")
+                    Text("Start your mindful practice")
                         .font(.subheadline)
                         .foregroundColor(.mindfulTextSecondary)
                 } else if isRunning {
@@ -114,9 +114,9 @@ struct SessionTimerView: View {
                         .foregroundColor(.mindfulTextSecondary)
                 }
             }
-            
+
             Spacer()
-            
+
             // Invisible button for centering
             Button("Cancel") {
                 // Do nothing
@@ -138,14 +138,14 @@ struct SessionTimerView: View {
                             .font(.headline)
                             .foregroundColor(.mindfulTextPrimary)
                         Spacer()
-                        
+
                         Button("Change") {
                             showingDurationSelection = true
                         }
                         .font(.subheadline)
                         .foregroundColor(.mindfulPrimary)
                     }
-                    
+
                     Button(action: {
                         showingDurationSelection = true
                     }) {
@@ -155,16 +155,16 @@ struct SessionTimerView: View {
                                     .font(.title2)
                                     .fontWeight(.semibold)
                                     .foregroundColor(.mindfulTextPrimary)
-                                
+
                                 if selectedWarmupSeconds > 0 {
-                                    Text("Includes \(formatWarmupTime(selectedWarmupSeconds)) warm-up")
+                                    Text("Includes \(formatWarmupTime(selectedWarmupSeconds)) warm up")
                                         .font(.caption)
                                         .foregroundColor(.mindfulTextSecondary)
                                 }
                             }
-                            
+
                             Spacer()
-                            
+
                             Image(systemName: "chevron.right")
                                 .font(.caption)
                                 .foregroundColor(.mindfulTextSecondary)
@@ -203,7 +203,7 @@ struct SessionTimerView: View {
                                         onTap: {
                                             let selectionFeedback = UISelectionFeedbackGenerator()
                                             selectionFeedback.selectionChanged()
-                                            
+
                                             withAnimation(.easeInOut(duration: 0.5)) {
                                                 selectedType = type
                                                 proxy.scrollTo(type, anchor: .center)
@@ -269,7 +269,7 @@ struct SessionTimerView: View {
                             .frame(width: progressRingSize, height: progressRingSize)
                             .rotationEffect(.degrees(-90))
                             .animation(.easeInOut(duration: 1), value: progressValue)
-                        
+
                         // Breathing guide circle (gentle pulse when running)
                         if isRunning {
                             Circle()
@@ -287,7 +287,7 @@ struct SessionTimerView: View {
                                 .accessibilityLabel("Time remaining: \(formatTimeForVoiceOver(timeRemaining))")
                                 .minimumScaleFactor(0.5)
                                 .lineLimit(1)
-                            
+
                             if selectedWarmupSeconds > 0 && timeRemaining > (selectedHours * 3600 + selectedMinutes * 60) {
                                 Text("Warming up...")
                                     .font(.caption)
@@ -408,12 +408,12 @@ struct SessionTimerView: View {
         let elapsed = totalDuration - timeRemaining
         return Double(elapsed) / Double(totalDuration)
     }
-    
+
     private var totalDuration: Int {
         let sessionDuration = selectedHours * 3600 + selectedMinutes * 60
         return sessionDuration + selectedWarmupSeconds
     }
-    
+
     private var isInWarmupPhase: Bool {
         guard selectedWarmupSeconds > 0 else { return false }
         let sessionDuration = selectedHours * 3600 + selectedMinutes * 60
@@ -428,7 +428,7 @@ struct SessionTimerView: View {
         let baseSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 60 : 48
         return baseSize
     }
-    
+
     private var breathingCircleSize: CGFloat {
         progressRingSize * 0.6
     }
@@ -476,7 +476,7 @@ struct SessionTimerView: View {
         sessionStartTime = nil
         timeRemaining = totalDuration
     }
-    
+
     private func updateTimeRemaining() {
         if sessionStartTime == nil {
             timeRemaining = totalDuration
@@ -519,20 +519,13 @@ struct SessionTimerView: View {
     // MARK: - Helper Functions
 
     private func formatTotalDuration() -> String {
-        let sessionDuration = selectedHours * 3600 + selectedMinutes * 60
-        let warmupDuration = selectedWarmupSeconds
-        
-        if warmupDuration > 0 {
-            return "\(formatDurationString(sessionDuration)) + \(formatWarmupTime(warmupDuration))"
-        } else {
-            return formatDurationString(sessionDuration)
-        }
+        return formatDurationString(selectedHours * 3600 + selectedMinutes * 60)
     }
-    
+
     private func formatDurationString(_ seconds: Int) -> String {
         let hours = seconds / 3600
         let minutes = (seconds % 3600) / 60
-        
+
         if hours > 0 && minutes > 0 {
             return "\(hours)h \(minutes)m"
         } else if hours > 0 {
@@ -543,7 +536,7 @@ struct SessionTimerView: View {
             return "0m"
         }
     }
-    
+
     private func formatWarmupTime(_ seconds: Int) -> String {
         if seconds == 0 {
             return "None"
@@ -611,11 +604,11 @@ struct SessionCompletionView: View {
             .navigationBarHidden(true)
         }
     }
-    
+
     private var completionHeaderSection: some View {
         HStack {
             Spacer()
-            
+
             VStack(spacing: MindfulSpacing.small) {
                 Text("Session Complete")
                     .font(.title2)
@@ -626,9 +619,9 @@ struct SessionCompletionView: View {
                     .font(.subheadline)
                     .foregroundColor(.mindfulTextSecondary)
             }
-            
+
             Spacer()
-            
+
             Button("Skip") {
                 onSave("", [])
             }
@@ -770,7 +763,7 @@ struct SessionTypeCard: View {
     let type: SessionType
     let isSelected: Bool
     let onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: MindfulSpacing.small) {
@@ -778,7 +771,7 @@ struct SessionTypeCard: View {
                     .font(.title2)
                     .foregroundColor(isSelected ? .white : .mindfulPrimary)
                     .frame(width: 32, height: 32)
-                
+
                 Text(type.displayName)
                     .font(.caption)
                     .fontWeight(.medium)
@@ -798,7 +791,7 @@ struct SessionTypeCard: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     private func getSessionIcon(for type: SessionType) -> String {
         switch type {
         case .mindfulness: return "figure.mind.and.body"
@@ -819,201 +812,138 @@ struct DurationSelectionView: View {
     @Binding var selectedWarmupSeconds: Int
     let onSave: () -> Void
     let onCancel: () -> Void
-    
-    private let warmupPresets = [0, 5, 10, 15, 30, 45, 60, 90, 120, 180, 240, 300] // 0s to 5m
-    
+
+    private let warmupPresets = [0, 5, 10, 15, 30, 45, 60, 120, 180, 240, 300] // 0s to 5m
+
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: MindfulSpacing.section) {
+                VStack(spacing: MindfulSpacing.large) {
                     headerSection
                     durationSection
                     warmupSection
-                    Spacer(minLength: MindfulSpacing.section)
+                    Spacer(minLength: MindfulSpacing.large)
                 }
-                .padding()
+                .padding(.horizontal, MindfulSpacing.standard)
+                .padding(.vertical, MindfulSpacing.small)
             }
             .background(Color.mindfulBackground.ignoresSafeArea())
             .navigationBarHidden(true)
         }
     }
-    
+
     private var headerSection: some View {
         HStack {
             Button("Cancel") {
                 onCancel()
             }
             .foregroundColor(.mindfulPrimary)
-            
+            .font(.body)
+
             Spacer()
-            
-            VStack(spacing: MindfulSpacing.small) {
-                Text("Choose Duration")
+
+            VStack(spacing: 4) {
+                Text("Duration")
                     .font(.title2)
-                    .fontWeight(.medium)
+                    .fontWeight(.semibold)
                     .foregroundColor(.mindfulTextPrimary)
-                
-                Text("Set your session length")
-                    .font(.subheadline)
-                    .foregroundColor(.mindfulTextSecondary)
             }
-            
+
             Spacer()
-            
+
             Button("Save") {
                 onSave()
             }
             .foregroundColor(.mindfulPrimary)
-            .fontWeight(.medium)
+            .font(.body)
+            .fontWeight(.semibold)
         }
         .padding(.horizontal, MindfulSpacing.standard)
     }
-    
+
     private var durationSection: some View {
         MindfulCard {
             VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
-                HStack {
-                    Image(systemName: "clock")
-                        .foregroundColor(.mindfulPrimary)
-                    Text("Session Duration")
-                        .font(.headline)
-                        .foregroundColor(.mindfulTextPrimary)
-                    Spacer()
-                }
-                
-                HStack(spacing: MindfulSpacing.large) {
+                HStack(alignment: .center, spacing: MindfulSpacing.standard) {
                     // Hours picker
                     VStack(spacing: MindfulSpacing.small) {
                         Text("Hours")
                             .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.mindfulTextSecondary)
-                        
+                            .fontWeight(.semibold)
+                            .foregroundColor(.mindfulTextPrimary)
+
                         Picker("Hours", selection: $selectedHours) {
                             ForEach(0...23, id: \.self) { hour in
                                 Text("\(hour)")
                                     .font(.body)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.mindfulTextPrimary)
                                     .tag(hour)
                             }
                         }
                         .pickerStyle(WheelPickerStyle())
-                        .frame(width: 100, height: 150)
+                        .frame(width: 80, height: 140)
                         .clipped()
                     }
-                    
+                    .frame(maxWidth: .infinity)
+
                     // Minutes picker
                     VStack(spacing: MindfulSpacing.small) {
                         Text("Minutes")
                             .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.mindfulTextSecondary)
-                        
+                            .fontWeight(.semibold)
+                            .foregroundColor(.mindfulTextPrimary)
+
                         Picker("Minutes", selection: $selectedMinutes) {
                             ForEach(0...59, id: \.self) { minute in
                                 Text("\(minute)")
                                     .font(.body)
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.mindfulTextPrimary)
                                     .tag(minute)
                             }
                         }
                         .pickerStyle(WheelPickerStyle())
-                        .frame(width: 100, height: 150)
+                        .frame(width: 80, height: 140)
                         .clipped()
                     }
-                    
-                    Spacer()
-                    
-                    // Duration display
-                    VStack(spacing: MindfulSpacing.small) {
-                        Text("Total")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.mindfulTextSecondary)
-                        
-                        Text(formatSessionDuration())
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .foregroundColor(.mindfulPrimary)
-                            .multilineTextAlignment(.center)
-                        
-                        if selectedWarmupSeconds > 0 {
-                            Text("+\(formatWarmupTime(selectedWarmupSeconds))")
-                                .font(.caption)
-                                .foregroundColor(.mindfulSecondary)
-                        }
-                    }
-                    .frame(maxWidth: 80)
+                    .frame(maxWidth: .infinity)
                 }
             }
         }
     }
-    
+
     private var warmupSection: some View {
         MindfulCard {
-            VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
-                HStack {
-                    Image(systemName: "timer")
-                        .foregroundColor(.mindfulPrimary)
-                    Text("Warm-up Time")
-                        .font(.headline)
+            VStack(alignment: .center, spacing: MindfulSpacing.standard) {
+                VStack(spacing: MindfulSpacing.small) {
+                    Text("Warm Up")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
                         .foregroundColor(.mindfulTextPrimary)
-                    Spacer()
-                }
-                
-                LazyVGrid(
-                    columns: Array(repeating: GridItem(.flexible()), count: UIDevice.current.userInterfaceIdiom == .pad ? 6 : 4),
-                    spacing: MindfulSpacing.small
-                ) {
-                    ForEach(warmupPresets, id: \.self) { warmupTime in
-                        Button(
-                            action: {
-                                let selectionFeedback = UISelectionFeedbackGenerator()
-                                selectionFeedback.selectionChanged()
-                                selectedWarmupSeconds = warmupTime
-                            },
-                            label: {
-                                Text(formatWarmupTime(warmupTime))
-                                    .font(.caption)
-                                    .foregroundColor(selectedWarmupSeconds == warmupTime ? .white : .mindfulPrimary)
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 10)
-                                    .background(
-                                        RoundedRectangle(cornerRadius: 8)
-                                            .fill(selectedWarmupSeconds == warmupTime ? Color.mindfulPrimary : Color.clear)
-                                            .stroke(Color.mindfulPrimary, lineWidth: 1)
-                                    )
-                                    .scaleEffect(selectedWarmupSeconds == warmupTime ? 1.05 : 1.0)
-                                    .animation(.easeInOut(duration: 0.2), value: selectedWarmupSeconds)
-                            }
-                        )
-                        .accessibilityLabel("Warm-up \(formatWarmupTime(warmupTime))")
-                        .accessibilityHint(selectedWarmupSeconds == warmupTime ? "Currently selected" : "Tap to select this warm-up time")
+
+                    Picker("Warm Up", selection: $selectedWarmupSeconds) {
+                        ForEach(warmupPresets, id: \.self) { warmupTime in
+                            Text(formatWarmupTime(warmupTime))
+                                .font(.body)
+                                .fontWeight(.medium)
+                                .foregroundColor(.mindfulTextPrimary)
+                                .tag(warmupTime)
+                        }
                     }
-                }
-                
-                if selectedWarmupSeconds > 0 {
-                    HStack {
-                        Image(systemName: "info.circle")
-                            .font(.caption)
-                            .foregroundColor(.mindfulTextSecondary)
-                        Text("Warm-up will prepare you for the main session")
-                            .font(.caption)
-                            .foregroundColor(.mindfulTextSecondary)
-                    }
-                    .padding(.top, MindfulSpacing.small)
+                    .pickerStyle(WheelPickerStyle())
+                    .frame(height: 140)
+                    .clipped()
                 }
             }
         }
     }
-    
-    private func formatSessionDuration() -> String {
-        let sessionDuration = selectedHours * 3600 + selectedMinutes * 60
-        return formatDurationString(sessionDuration)
-    }
-    
+
+
     private func formatDurationString(_ seconds: Int) -> String {
         let hours = seconds / 3600
         let minutes = (seconds % 3600) / 60
-        
+
         if hours > 0 && minutes > 0 {
             return "\(hours)h\n\(minutes)m"
         } else if hours > 0 {
@@ -1024,7 +954,7 @@ struct DurationSelectionView: View {
             return "0m"
         }
     }
-    
+
     private func formatWarmupTime(_ seconds: Int) -> String {
         if seconds == 0 {
             return "None"

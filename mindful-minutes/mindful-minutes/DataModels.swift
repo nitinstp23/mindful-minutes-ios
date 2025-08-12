@@ -67,7 +67,7 @@ enum SessionType: String, CaseIterable, Codable {
     case mindfulness = "Mindfulness"
     case breathing = "Breathing"
     case bodyScan = "Body Scan"
-    case lovingKindness = "Loving Kindness"
+    case lovingKindness = "Metta"
     case focus = "Focus"
     case movement = "Movement"
     case sleep = "Sleep"

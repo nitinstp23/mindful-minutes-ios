@@ -105,11 +105,11 @@ struct SessionTimerView: View {
                         .font(.subheadline)
                         .foregroundColor(.mindfulTextSecondary)
                 } else if isRunning {
-                    Text(isInWarmupPhase ? "Warming up - prepare yourself" : "Stay present and focused")
+                    Text(isInWarmupPhase ? "Prepare yourself" : "Stay present and focused")
                         .font(.subheadline)
                         .foregroundColor(.mindfulTextSecondary)
                 } else {
-                    Text("Session paused")
+                    Text("Paused")
                         .font(.subheadline)
                         .foregroundColor(.mindfulTextSecondary)
                 }
@@ -137,13 +137,6 @@ struct SessionTimerView: View {
                         Text("Duration")
                             .font(.headline)
                             .foregroundColor(.mindfulTextPrimary)
-                        Spacer()
-
-                        Button("Change") {
-                            showingDurationSelection = true
-                        }
-                        .font(.subheadline)
-                        .foregroundColor(.mindfulPrimary)
                     }
 
                     Button(action: {
@@ -780,12 +773,15 @@ struct SessionTypeCard: View {
                     .lineLimit(2)
             }
             .frame(width: 90, height: 80)
-            .padding(MindfulSpacing.small)
             .background(
                 RoundedRectangle(cornerRadius: 12)
                     .fill(isSelected ? Color.mindfulPrimary : Color.mindfulBackground)
-                    .stroke(isSelected ? Color.mindfulPrimary : Color.mindfulSecondary.opacity(0.3), lineWidth: 1)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(isSelected ? Color.mindfulPrimary : Color.mindfulSecondary.opacity(0.3), lineWidth: 1)
+                    )
             )
+            .padding(MindfulSpacing.small)
             .scaleEffect(isSelected ? 1.05 : 1.0)
             .animation(.easeInOut(duration: 0.2), value: isSelected)
         }

@@ -220,3 +220,77 @@ Ready to proceed with Phase 4: Polish & iOS Features
 - Adaptive grid columns (4 columns on iPad, 3 on iPhone)
 - Dynamic font sizing based on device type
 - Responsive layout adjustments for different screen sizes
+
+---
+
+## New Session Tab Conversion Plan
+
+### Problem Statement
+Currently, the "New Session" tab behaves as a modal popup trigger rather than a proper standalone screen. When users tap the "New Session" tab, it:
+1. Shows the `SessionTimerView` as a sheet/popup
+2. Automatically resets to the Home tab (tag 0) after 0.1 seconds
+3. Uses a `Color.clear` placeholder instead of actual content
+
+### Current Implementation Analysis
+
+**ContentView.swift (lines 37-77)**:
+- Tab 2 uses `Color.clear` as placeholder content
+- `onChange(of: selectedTab)` detects tab 2 selection
+- Triggers `showingNewSession = true` to show sheet
+- Automatically resets to Home tab via `DispatchQueue.main.asyncAfter`
+- Presents `SessionTimerView` as `.sheet(isPresented: $showingNewSession)`
+
+**SessionTimerView.swift**:
+- Designed as modal with Cancel/Done header buttons
+- Uses `@Environment(\.dismiss)` for modal dismissal
+- Has NavigationView wrapper for modal presentation
+- Contains dismiss logic in Cancel button and completion flow
+
+### Implementation Plan
+
+#### 1. Update ContentView.swift ✅
+**Changes completed**:
+- [x] Replace `Color.clear` with `SessionTimerView()` for tab 2
+- [x] Remove `onChange(of: selectedTab)` logic for tab 2 handling
+- [x] Remove `@State private var showingNewSession = false`
+- [x] Remove `.sheet(isPresented: $showingNewSession)` modifier
+- [x] Ensure `SessionTimerView()` gets the coordinator environment
+
+#### 2. Update SessionTimerView.swift ✅
+**Changes completed**:
+- [x] Remove `@Environment(\.dismiss)` since it won't be a modal
+- [x] Remove NavigationView wrapper (ContentView handles navigation)
+- [x] Update header section to remove Reset/Cancel buttons
+- [x] Replace dismiss() calls with resetSession() logic
+- [x] Ensure proper state management for tab-based usage
+- [x] Update completion flow to reset state instead of dismissing
+
+#### 3. State Management Updates ✅
+**Implementation completed**:
+- [x] Handle session state persistence when switching tabs
+- [x] Add resetSession() function for clean state reset
+- [x] Ensure timer continues running when user switches tabs
+- [x] Handle proper cleanup with resetSession() function
+
+### Files Modified ✅
+1. **ContentView.swift** - Removed modal logic, added direct tab content
+2. **SessionTimerView.swift** - Removed modal-specific code, updated navigation
+
+### Implementation Results ✅
+**Time**: ~1 hour (faster than estimated)
+**Complexity**: Medium (required careful state management)
+**Risk**: Low (mostly UI changes, core logic preserved)
+
+**Key Changes Made**:
+- Converted popup modal to standalone tab experience
+- Timer now persists when switching between tabs
+- Removed Cancel/Reset buttons from header (cleaner UI)
+- Added resetSession() function for proper state management
+- Session completion now resets state instead of dismissing
+- Maintains all existing functionality while improving UX
+
+**Benefits Achieved**:
+- More intuitive tab navigation behavior
+- Timer continues running in background when switching tabs
+- Cleaner architecture without hacky tab switching logic
+- Better user experience with persistent session state

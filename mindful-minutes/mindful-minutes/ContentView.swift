@@ -11,7 +11,6 @@ import SwiftData
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @State private var dataCoordinator: MindfulDataCoordinator?
-    @State private var showingNewSession = false
     @State private var selectedTab = 0
 
     var body: some View {
@@ -35,7 +34,7 @@ struct ContentView: View {
                         .tag(1)
 
                     // New Session Tab (Center)
-                    Color.clear
+                    SessionTimerView()
                         .tabItem {
                             Image(systemName: "plus.circle.fill")
                             Text("New Session")
@@ -62,19 +61,6 @@ struct ContentView: View {
                 .environment(coordinator)
                 .accentColor(.mindfulPrimary)
                 .background(Color.mindfulBackground.ignoresSafeArea())
-                .onChange(of: selectedTab) { newValue in
-                    if newValue == 2 {
-                        showingNewSession = true
-                        // Reset to previous tab to avoid staying on the clear tab
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            selectedTab = 0
-                        }
-                    }
-                }
-                .sheet(isPresented: $showingNewSession) {
-                    SessionTimerView()
-                        .environment(coordinator)
-                }
             } else {
                 ProgressView("Loading...")
                     .foregroundColor(.mindfulTextPrimary)

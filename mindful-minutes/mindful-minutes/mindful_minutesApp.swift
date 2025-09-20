@@ -39,7 +39,7 @@ struct MindfulMinutesApp: App {
         // Configure navigation bar appearance
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.configureWithOpaqueBackground()
-        navBarAppearance.backgroundColor = UIColor(Color.mindfulBackground)
+        navBarAppearance.backgroundColor = UIColor.white
         navBarAppearance.titleTextAttributes = [.foregroundColor: UIColor.black]
         navBarAppearance.largeTitleTextAttributes = [.foregroundColor: UIColor.black]
         
@@ -47,10 +47,10 @@ struct MindfulMinutesApp: App {
         UINavigationBar.appearance().scrollEdgeAppearance = navBarAppearance
         UINavigationBar.appearance().compactAppearance = navBarAppearance
         
-        // Configure tab bar appearance  
+        // Configure tab bar appearance
         let tabBarAppearance = UITabBarAppearance()
         tabBarAppearance.configureWithOpaqueBackground()
-        tabBarAppearance.backgroundColor = UIColor(Color.mindfulBackground)
+        tabBarAppearance.backgroundColor = UIColor.white
         
         UITabBar.appearance().standardAppearance = tabBarAppearance
         UITabBar.appearance().scrollEdgeAppearance = tabBarAppearance
@@ -59,10 +59,10 @@ struct MindfulMinutesApp: App {
         UISegmentedControl.appearance().selectedSegmentTintColor = UIColor(Color.mindfulPrimary)
         UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.white], for: .selected)
         UISegmentedControl.appearance().setTitleTextAttributes([.foregroundColor: UIColor.black], for: .normal)
-        UISegmentedControl.appearance().backgroundColor = UIColor(Color.mindfulBackground)
+        UISegmentedControl.appearance().backgroundColor = UIColor.white
         
         // Configure other UI elements
-        UITableView.appearance().backgroundColor = UIColor(Color.mindfulBackground)
-        UIScrollView.appearance().backgroundColor = UIColor(Color.mindfulBackground)
+        UITableView.appearance().backgroundColor = UIColor.white
+        UIScrollView.appearance().backgroundColor = UIColor.white
     }
 }

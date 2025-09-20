@@ -4,7 +4,6 @@ import Foundation
 
 struct SessionTimerView: View {
     @Environment(MindfulDataCoordinator.self) private var dataCoordinator
-    @Environment(\.dismiss) private var dismiss
 
     @State private var selectedHours: Int = 0
     @State private var selectedMinutes: Int = 10
@@ -21,42 +20,39 @@ struct SessionTimerView: View {
     private let warmupPresets = [0, 5, 10, 15, 30, 45, 60, 90, 120, 180, 240, 300] // 0s to 5m
 
     var body: some View {
-        NavigationView {
-            VStack(spacing: MindfulSpacing.section) {
-                headerSection
+        VStack(spacing: MindfulSpacing.section) {
+            headerSection
 
-                if !isRunning && sessionStartTime == nil {
-                    setupSection
-                        .transition(.asymmetric(
-                            insertion: .scale.combined(with: .opacity),
-                            removal: .scale(scale: 0.8).combined(with: .opacity)
-                        ))
-                } else {
-                    timerSection
-                        .transition(.asymmetric(
-                            insertion: .scale.combined(with: .opacity),
-                            removal: .scale(scale: 0.8).combined(with: .opacity)
-                        ))
-                }
+            if !isRunning && sessionStartTime == nil {
+                setupSection
+                    .transition(.asymmetric(
+                        insertion: .scale.combined(with: .opacity),
+                        removal: .scale(scale: 0.8).combined(with: .opacity)
+                    ))
+            } else {
+                timerSection
+                    .transition(.asymmetric(
+                        insertion: .scale.combined(with: .opacity),
+                        removal: .scale(scale: 0.8).combined(with: .opacity)
+                    ))
+            }
 
-                if sessionStartTime != nil && !isRunning {
-                    sessionNotesSection
-                        .transition(.scale.combined(with: .opacity))
-                }
-
-                Spacer()
-
-                actionButtons
+            if sessionStartTime != nil && !isRunning {
+                sessionNotesSection
                     .transition(.scale.combined(with: .opacity))
             }
-            .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3), value: isRunning)
-            .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3), value: sessionStartTime)
-            .padding()
-            .background(Color.mindfulBackground.ignoresSafeArea())
-            .navigationBarHidden(true)
-            .onAppear {
-                updateTimeRemaining()
-            }
+
+            Spacer()
+
+            actionButtons
+                .transition(.scale.combined(with: .opacity))
+        }
+        .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3), value: isRunning)
+        .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3), value: sessionStartTime)
+        .padding()
+        .background(Color.mindfulBackground.ignoresSafeArea())
+        .onAppear {
+            updateTimeRemaining()
         }
         .sheet(isPresented: $showingCompletionView) {
             SessionCompletionView(
@@ -85,44 +81,25 @@ struct SessionTimerView: View {
     }
 
     private var headerSection: some View {
-        HStack {
-            Button("Cancel") {
-                stopSession()
-                dismiss()
+        VStack(spacing: MindfulSpacing.small) {
+            Text(isRunning ? "Meditating" : "New Session")
+                .font(.title2)
+                .fontWeight(.medium)
+                .foregroundColor(.mindfulTextPrimary)
+
+            if !isRunning && sessionStartTime == nil {
+                Text("Start your mindful practice")
+                    .font(.subheadline)
+                    .foregroundColor(.mindfulTextSecondary)
+            } else if isRunning {
+                Text(isInWarmupPhase ? "Prepare yourself" : "Stay present and focused")
+                    .font(.subheadline)
+                    .foregroundColor(.mindfulTextSecondary)
+            } else {
+                Text("Paused")
+                    .font(.subheadline)
+                    .foregroundColor(.mindfulTextSecondary)
             }
-            .foregroundColor(.mindfulPrimary)
-
-            Spacer()
-
-            VStack(spacing: MindfulSpacing.small) {
-                Text(isRunning ? "Meditating" : "New Session")
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .foregroundColor(.mindfulTextPrimary)
-
-                if !isRunning && sessionStartTime == nil {
-                    Text("Start your mindful practice")
-                        .font(.subheadline)
-                        .foregroundColor(.mindfulTextSecondary)
-                } else if isRunning {
-                    Text(isInWarmupPhase ? "Prepare yourself" : "Stay present and focused")
-                        .font(.subheadline)
-                        .foregroundColor(.mindfulTextSecondary)
-                } else {
-                    Text("Paused")
-                        .font(.subheadline)
-                        .foregroundColor(.mindfulTextSecondary)
-                }
-            }
-
-            Spacer()
-
-            // Invisible button for centering
-            Button("Cancel") {
-                // Do nothing
-            }
-            .foregroundColor(.mindfulPrimary)
-            .opacity(0)
         }
         .padding(.horizontal, MindfulSpacing.standard)
     }
@@ -350,13 +327,21 @@ struct SessionTimerView: View {
     private var actionButtons: some View {
         VStack(spacing: MindfulSpacing.standard) {
             if sessionStartTime == nil {
-                MindfulButton(
-                    title: "Start Session",
-                    action: {
-                        startSession()
-                    },
-                    style: .primary
-                )
+                Button(action: {
+                    startSession()
+                }) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.mindfulPrimary)
+                            .frame(width: 80, height: 80)
+                            .shadow(color: .mindfulPrimary.opacity(0.3), radius: 8, x: 0, y: 4)
+
+                        Image(systemName: "play.fill")
+                            .font(.system(size: 32, weight: .medium))
+                            .foregroundColor(.white)
+                    }
+                }
+                .buttonStyle(PlayButtonStyle())
             } else if isRunning {
                 HStack(spacing: MindfulSpacing.standard) {
                     MindfulButton(
@@ -470,6 +455,15 @@ struct SessionTimerView: View {
         timeRemaining = totalDuration
     }
 
+    private func resetSession() {
+        stopTimer()
+        isRunning = false
+        sessionStartTime = nil
+        timeRemaining = totalDuration
+        notes = ""
+        showingCompletionView = false
+    }
+
     private func updateTimeRemaining() {
         if sessionStartTime == nil {
             timeRemaining = totalDuration
@@ -506,7 +500,7 @@ struct SessionTimerView: View {
         )
 
         dataCoordinator.addSession(session)
-        dismiss()
+        resetSession()
     }
 
     // MARK: - Helper Functions
@@ -960,6 +954,15 @@ struct DurationSelectionView: View {
             let minutes = seconds / 60
             return "\(minutes)m"
         }
+    }
+}
+
+struct PlayButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .opacity(configuration.isPressed ? 0.8 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 

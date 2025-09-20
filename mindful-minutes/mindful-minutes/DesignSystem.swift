@@ -3,8 +3,8 @@ import SwiftUI
 extension Color {
     static let mindfulPrimary = Color(red: 0.063, green: 0.725, blue: 0.506)
     static let mindfulSecondary = Color(red: 0.078, green: 0.722, blue: 0.651)
-    static let mindfulBackground = Color(red: 0.941, green: 0.992, blue: 0.957)
-    static let mindfulBackgroundSecondary = Color(red: 0.925, green: 0.992, blue: 0.961)
+    static let mindfulBackground = Color.white
+    static let mindfulBackgroundSecondary = Color(red: 0.98, green: 0.98, blue: 0.98)
     static let mindfulTextPrimary = Color.black
     static let mindfulTextSecondary = Color.black.opacity(0.6)
 }
@@ -19,7 +19,7 @@ struct MindfulCard<Content: View>: View {
     var body: some View {
         content
             .padding()
-            .background(Color.mindfulBackground)
+            .background(Color.mindfulBackgroundSecondary)
             .cornerRadius(12)
             .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
     }

@@ -71,8 +71,7 @@ class SessionRepository {
         // Apply search filter
         if !searchText.isEmpty {
             filtered = filtered.filter { session in
-                session.type.rawValue.localizedCaseInsensitiveContains(searchText) ||
-                session.notes.localizedCaseInsensitiveContains(searchText)
+                session.type.rawValue.localizedCaseInsensitiveContains(searchText)
             }
         }
 

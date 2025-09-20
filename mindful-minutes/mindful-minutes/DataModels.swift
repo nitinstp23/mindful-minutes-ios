@@ -7,7 +7,6 @@ final class MeditationSession {
     var date: Date
     var duration: TimeInterval // in seconds
     var type: SessionType
-    var notes: String
     var isCompleted: Bool
     var startTime: Date?
     var endTime: Date?
@@ -18,7 +17,6 @@ final class MeditationSession {
         date: Date = Date(),
         duration: TimeInterval = 0,
         type: SessionType = .mindfulness,
-        notes: String = "",
         isCompleted: Bool = false,
         startTime: Date? = nil,
         endTime: Date? = nil,
@@ -28,7 +26,6 @@ final class MeditationSession {
         self.date = date
         self.duration = duration
         self.type = type
-        self.notes = notes
         self.isCompleted = isCompleted
         self.startTime = startTime
         self.endTime = endTime

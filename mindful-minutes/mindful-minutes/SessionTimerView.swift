@@ -4,18 +4,7 @@ import Foundation
 
 struct SessionTimerView: View {
     @Environment(MindfulDataCoordinator.self) private var dataCoordinator
-
-    @State private var selectedHours: Int = 0
-    @State private var selectedMinutes: Int = 10
-    @State private var selectedWarmupSeconds: Int = 0
-    @State private var selectedType: SessionType = .mindfulness
-    @State private var isRunning = false
-    @State private var timeRemaining: Int = 600
-    @State private var timer: Timer?
-    @State private var sessionStartTime: Date?
-    @State private var notes: String = ""
-    @State private var showingCompletionView = false
-    @State private var showingDurationSelection = false
+    @Bindable var sessionCoordinator: SessionCoordinator
 
     private let warmupPresets = [0, 5, 10, 15, 30, 45, 60, 90, 120, 180, 240, 300] // 0s to 5m
 
@@ -23,7 +12,7 @@ struct SessionTimerView: View {
         VStack(spacing: MindfulSpacing.section) {
             headerSection
 
-            if !isRunning && sessionStartTime == nil {
+            if !sessionCoordinator.isRunning && sessionCoordinator.sessionStartTime == nil {
                 setupSection
                     .transition(.asymmetric(
                         insertion: .scale.combined(with: .opacity),
@@ -37,62 +26,53 @@ struct SessionTimerView: View {
                     ))
             }
 
-            if sessionStartTime != nil && !isRunning {
-                sessionNotesSection
-                    .transition(.scale.combined(with: .opacity))
-            }
-
+            // Spacing between timer and action buttons
             Spacer()
+                .frame(minHeight: 40, maxHeight: 80)
 
             actionButtons
                 .transition(.scale.combined(with: .opacity))
         }
-        .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3), value: isRunning)
-        .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3), value: sessionStartTime)
+        .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3), value: sessionCoordinator.isRunning)
+        .animation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3), value: sessionCoordinator.sessionStartTime)
         .padding()
-        .background(Color.mindfulBackground.ignoresSafeArea())
+        .padding(.bottom, (sessionCoordinator.isRunning || sessionCoordinator.sessionCompleted) ? 40 : 20) // More space when tab bar is hidden
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.mindfulBackground.ignoresSafeArea(.all))
         .onAppear {
-            updateTimeRemaining()
+            sessionCoordinator.updateTimeRemaining()
         }
-        .sheet(isPresented: $showingCompletionView) {
-            SessionCompletionView(
-                duration: totalDuration - timeRemaining,
-                type: selectedType,
-                onSave: saveSession
-            )
-        }
-        .sheet(isPresented: $showingDurationSelection) {
+        .sheet(isPresented: $sessionCoordinator.showingDurationSelection) {
             DurationSelectionView(
-                selectedHours: $selectedHours,
-                selectedMinutes: $selectedMinutes,
-                selectedWarmupSeconds: $selectedWarmupSeconds,
+                selectedHours: $sessionCoordinator.selectedHours,
+                selectedMinutes: $sessionCoordinator.selectedMinutes,
+                selectedWarmupSeconds: $sessionCoordinator.selectedWarmupSeconds,
                 onSave: {
-                    updateTimeRemaining()
-                    showingDurationSelection = false
+                    sessionCoordinator.updateTimeRemaining()
+                    sessionCoordinator.showingDurationSelection = false
                 },
                 onCancel: {
-                    showingDurationSelection = false
+                    sessionCoordinator.showingDurationSelection = false
                 }
             )
         }
         .onDisappear {
-            stopTimer()
+            // Stop timer if view disappears
         }
     }
 
     private var headerSection: some View {
         VStack(spacing: MindfulSpacing.small) {
-            Text(isRunning ? "Meditating" : "New Session")
-                .font(.title2)
-                .fontWeight(.medium)
-                .foregroundColor(.mindfulTextPrimary)
-
-            if !isRunning && sessionStartTime == nil {
+            if !sessionCoordinator.isRunning && sessionCoordinator.sessionStartTime == nil {
                 Text("Start your mindful practice")
                     .font(.subheadline)
                     .foregroundColor(.mindfulTextSecondary)
-            } else if isRunning {
-                Text(isInWarmupPhase ? "Prepare yourself" : "Stay present and focused")
+            } else if sessionCoordinator.isRunning {
+                Text(sessionCoordinator.isInWarmupPhase ? "Prepare yourself" : "Stay present and focused")
+                    .font(.subheadline)
+                    .foregroundColor(.mindfulTextSecondary)
+            } else if sessionCoordinator.timerFinished {
+                Text("You completed \(sessionCoordinator.formatTotalDuration())")
                     .font(.subheadline)
                     .foregroundColor(.mindfulTextSecondary)
             } else {
@@ -105,94 +85,65 @@ struct SessionTimerView: View {
     }
 
     private var setupSection: some View {
-        VStack(spacing: MindfulSpacing.large) {
-            MindfulCard {
-                VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
-                    HStack {
-                        Image(systemName: "clock")
-                            .foregroundColor(.mindfulPrimary)
-                        Text("Duration")
-                            .font(.headline)
-                            .foregroundColor(.mindfulTextPrimary)
-                    }
+        VStack(spacing: MindfulSpacing.section) {
+            durationSection
+            sessionTypeSection
+        }
+    }
 
-                    Button(action: {
-                        showingDurationSelection = true
-                    }) {
-                        HStack {
-                            VStack(alignment: .leading, spacing: MindfulSpacing.small) {
-                                Text(formatTotalDuration())
-                                    .font(.title2)
-                                    .fontWeight(.semibold)
-                                    .foregroundColor(.mindfulTextPrimary)
-
-                                if selectedWarmupSeconds > 0 {
-                                    Text("Includes \(formatWarmupTime(selectedWarmupSeconds)) warm up")
-                                        .font(.caption)
-                                        .foregroundColor(.mindfulTextSecondary)
-                                }
-                            }
-
-                            Spacer()
-
-                            Image(systemName: "chevron.right")
-                                .font(.caption)
-                                .foregroundColor(.mindfulTextSecondary)
-                        }
-                        .padding(.vertical, MindfulSpacing.small)
-                        .padding(.horizontal, MindfulSpacing.standard)
-                        .background(Color.mindfulBackground)
-                        .cornerRadius(8)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.mindfulSecondary.opacity(0.3), lineWidth: 1)
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
+    private var durationSection: some View {
+        MindfulCard {
+            VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
+                HStack {
+                    Image(systemName: "clock")
+                        .foregroundColor(.mindfulPrimary)
+                    Text("Duration")
+                        .font(.headline)
+                        .foregroundColor(.mindfulTextPrimary)
+                    Spacer()
                 }
-            }
 
-            MindfulCard {
-                VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
+                Button(action: {
+                    sessionCoordinator.showingDurationSelection = true
+                }) {
                     HStack {
-                        Image(systemName: "figure.mind.and.body")
-                            .foregroundColor(.mindfulPrimary)
-                        Text("Session Type")
-                            .font(.headline)
+                        Text(sessionCoordinator.formatTotalDuration())
+                            .font(.title2)
+                            .fontWeight(.medium)
                             .foregroundColor(.mindfulTextPrimary)
                         Spacer()
+                        Image(systemName: "chevron.right")
+                            .foregroundColor(.mindfulTextSecondary)
                     }
+                    .padding()
+                    .cornerRadius(8)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+    }
 
-                    ScrollViewReader { proxy in
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: MindfulSpacing.small) {
-                                ForEach(SessionType.allCases, id: \.self) { type in
-                                    SessionTypeCard(
-                                        type: type,
-                                        isSelected: selectedType == type,
-                                        onTap: {
-                                            let selectionFeedback = UISelectionFeedbackGenerator()
-                                            selectionFeedback.selectionChanged()
+    private var sessionTypeSection: some View {
+        MindfulCard {
+            VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
+                HStack {
+                    Image(systemName: "figure.mind.and.body")
+                        .foregroundColor(.mindfulPrimary)
+                    Text("Session Type")
+                        .font(.headline)
+                        .foregroundColor(.mindfulTextPrimary)
+                    Spacer()
+                }
 
-                                            withAnimation(.easeInOut(duration: 0.5)) {
-                                                selectedType = type
-                                                proxy.scrollTo(type, anchor: .center)
-                                            }
-                                        }
-                                    )
-                                    .id(type)
-                                }
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: MindfulSpacing.small), count: 3), spacing: MindfulSpacing.small) {
+                    ForEach(SessionType.allCases.prefix(6), id: \.self) { type in
+                        SessionTypeCard(
+                            type: type,
+                            isSelected: sessionCoordinator.selectedType == type,
+                            onTap: {
+                                sessionCoordinator.selectedType = type
                             }
-                            .padding(.horizontal, 4)
-                        }
-                        .onAppear {
-                            // Scroll to initially selected type
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                withAnimation(.easeInOut(duration: 0.5)) {
-                                    proxy.scrollTo(selectedType, anchor: .center)
-                                }
-                            }
-                        }
+                        )
                     }
                 }
             }
@@ -200,358 +151,134 @@ struct SessionTimerView: View {
     }
 
     private var timerSection: some View {
-        VStack(spacing: MindfulSpacing.large) {
-            MindfulCard {
-                VStack(spacing: MindfulSpacing.large) {
-                    // Session type header
-                    VStack(spacing: MindfulSpacing.small) {
-                        Image(systemName: getSessionIcon(for: selectedType))
-                            .font(.title)
-                            .foregroundColor(.mindfulPrimary)
-                            .frame(width: 40, height: 40)
-                            .background(Color.mindfulPrimary.opacity(0.1))
-                            .cornerRadius(8)
-
-                        Text(selectedType.displayName)
-                            .font(.headline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.mindfulTextPrimary)
-                    }
-
-                    // Timer display with progress ring
-                    ZStack {
-                        // Progress ring background
-                        Circle()
-                            .stroke(Color.mindfulSecondary.opacity(0.2), lineWidth: 6)
-                            .frame(width: progressRingSize, height: progressRingSize)
-
-                        // Progress ring foreground
-                        Circle()
-                            .trim(from: 0, to: progressValue)
-                            .stroke(
-                                LinearGradient(
-                                    colors: [Color.mindfulPrimary, Color.mindfulSecondary],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                style: StrokeStyle(lineWidth: 6, lineCap: .round)
-                            )
-                            .frame(width: progressRingSize, height: progressRingSize)
-                            .rotationEffect(.degrees(-90))
-                            .animation(.easeInOut(duration: 1), value: progressValue)
-
-                        // Breathing guide circle (gentle pulse when running)
-                        if isRunning {
-                            Circle()
-                                .fill(Color.mindfulPrimary.opacity(0.1))
-                                .frame(width: breathingCircleSize, height: breathingCircleSize)
-                                .scaleEffect(isRunning ? 1.1 : 1.0)
-                                .animation(.easeInOut(duration: 4).repeatForever(autoreverses: true), value: isRunning)
-                        }
-
-                        // Time display
-                        VStack(spacing: MindfulSpacing.small) {
-                            Text(formatTime(timeRemaining))
-                                .font(.system(size: dynamicTimerFontSize, weight: .light, design: .monospaced))
-                                .foregroundColor(.mindfulTextPrimary)
-                                .accessibilityLabel("Time remaining: \(formatTimeForVoiceOver(timeRemaining))")
-                                .minimumScaleFactor(0.5)
-                                .lineLimit(1)
-
-                            if selectedWarmupSeconds > 0 && timeRemaining > (selectedHours * 3600 + selectedMinutes * 60) {
-                                Text("Warming up...")
-                                    .font(.caption)
-                                    .foregroundColor(.mindfulSecondary)
-                            } else {
-                                Text("\(Int(progressValue * 100))% complete")
-                                    .font(.caption)
-                                    .foregroundColor(.mindfulTextSecondary)
-                            }
-                        }
-                    }
-                    .accessibilityLabel("Session progress")
-                    .accessibilityValue("\(Int(progressValue * 100))% complete")
-
-                    // Status indicator
-                    if !isRunning && timeRemaining < totalDuration {
-                        HStack(spacing: MindfulSpacing.small) {
-                            Image(systemName: "pause.circle.fill")
-                                .foregroundColor(.mindfulSecondary)
-                            Text("Session paused")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(.mindfulTextSecondary)
-                        }
-                        .padding(.horizontal, MindfulSpacing.standard)
-                        .padding(.vertical, MindfulSpacing.small)
-                        .background(Color.mindfulSecondary.opacity(0.1))
-                        .cornerRadius(8)
-                    } else if isRunning {
-                        HStack(spacing: MindfulSpacing.small) {
-                            Image(systemName: isInWarmupPhase ? "timer" : "play.circle.fill")
-                                .foregroundColor(isInWarmupPhase ? .mindfulSecondary : .mindfulPrimary)
-                            Text(isInWarmupPhase ? "Prepare yourself..." : "Focus on your breath")
-                                .font(.subheadline)
-                                .fontWeight(.medium)
-                                .foregroundColor(isInWarmupPhase ? .mindfulTextSecondary : .mindfulTextPrimary)
-                        }
-                        .padding(.horizontal, MindfulSpacing.standard)
-                        .padding(.vertical, MindfulSpacing.small)
-                        .background((isInWarmupPhase ? Color.mindfulSecondary : Color.mindfulPrimary).opacity(0.1))
-                        .cornerRadius(8)
-                    }
-                }
-                .padding(.vertical, MindfulSpacing.standard)
-            }
+        VStack(spacing: MindfulSpacing.section) {
+            sessionTypeDisplay
+            progressRing
         }
     }
 
-    private var sessionNotesSection: some View {
-        MindfulCard {
-            VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
-                HStack {
-                    Image(systemName: "note.text")
-                        .foregroundColor(.mindfulPrimary)
-                    Text("Session Notes")
-                        .font(.headline)
-                    Spacer()
-                }
+    private var sessionTypeDisplay: some View {
+        VStack(spacing: MindfulSpacing.small) {
+            Image(systemName: getSessionIcon(for: sessionCoordinator.selectedType))
+                .font(.system(size: 40))
+                .foregroundColor(.mindfulPrimary)
+                .frame(width: 60, height: 60)
+                .background(Color.mindfulPrimary.opacity(0.1))
+                .cornerRadius(12)
 
-                TextField("How did your session go?", text: $notes, axis: .vertical)
-                    .textFieldStyle(RoundedBorderTextFieldStyle())
-                    .lineLimit(3...6)
+            Text(sessionCoordinator.selectedType.displayName)
+                .font(.title2)
+                .fontWeight(.medium)
+                .foregroundColor(.mindfulTextPrimary)
+        }
+    }
+
+    private var progressRing: some View {
+        ZStack {
+            Circle()
+                .stroke(Color.mindfulPrimary.opacity(0.2), lineWidth: 8)
+                .frame(width: 200, height: 200)
+
+            Circle()
+                .trim(from: 0, to: sessionCoordinator.progressValue)
+                .stroke(Color.mindfulPrimary, style: StrokeStyle(lineWidth: 8, lineCap: .round))
+                .frame(width: 200, height: 200)
+                .rotationEffect(.degrees(-90))
+                .animation(.easeInOut(duration: 1), value: sessionCoordinator.progressValue)
+
+            VStack(spacing: 8) {
+                Text(sessionCoordinator.formatTimeDisplay(sessionCoordinator.timeRemaining))
+                    .font(.system(size: 32, weight: .medium, design: .monospaced))
+                    .foregroundColor(.mindfulTextPrimary)
+                    .accessibilityLabel("Time remaining: \(sessionCoordinator.formatTimeForVoiceOver(sessionCoordinator.timeRemaining))")
+                    .minimumScaleFactor(0.5)
+                    .lineLimit(1)
+                if sessionCoordinator.selectedWarmupSeconds > 0 && sessionCoordinator.timeRemaining > (sessionCoordinator.selectedHours * 3600 + sessionCoordinator.selectedMinutes * 60) {
+                    Text("Warming up...")
+                        .font(.caption)
+                        .foregroundColor(.mindfulSecondary)
+                } else {
+                    Text("\(Int(sessionCoordinator.progressValue * 100))% complete")
+                        .font(.caption)
+                        .foregroundColor(.mindfulTextSecondary)
+                }
             }
         }
+        .accessibilityLabel("Session progress")
+        .accessibilityValue("\(Int(sessionCoordinator.progressValue * 100))% complete")
     }
 
     private var actionButtons: some View {
-        VStack(spacing: MindfulSpacing.standard) {
-            if sessionStartTime == nil {
-                Button(action: {
-                    startSession()
-                }) {
-                    ZStack {
-                        Circle()
-                            .fill(Color.mindfulPrimary)
-                            .frame(width: 80, height: 80)
-                            .shadow(color: .mindfulPrimary.opacity(0.3), radius: 8, x: 0, y: 4)
+        VStack(spacing: 0) {
+            // Primary button area - always fixed height and position
+            VStack {
+                if sessionCoordinator.sessionCompleted {
+                    // Session completed: Continue button
+                    MindfulButton(
+                        title: "Continue",
+                        action: { sessionCoordinator.continueAfterSession() },
+                        style: .primary
+                    )
+                } else if sessionCoordinator.timerFinished {
+                    // Timer finished: No primary button, only secondary buttons below
+                    Color.clear
+                } else {
+                    // Play/Pause button (for setup, running, or paused states)
+                    Button(action: {
+                        if sessionCoordinator.sessionStartTime == nil {
+                            sessionCoordinator.startSession()
+                        } else if sessionCoordinator.isRunning {
+                            sessionCoordinator.pauseSession()
+                        } else {
+                            sessionCoordinator.resumeSession()
+                        }
+                    }) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.mindfulPrimary)
+                                .frame(width: 80, height: 80)
+                                .shadow(color: .mindfulPrimary.opacity(0.3), radius: 8, x: 0, y: 4)
 
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 32, weight: .medium))
-                            .foregroundColor(.white)
+                            Image(systemName: sessionCoordinator.playButtonIcon)
+                                .font(.system(size: 32, weight: .medium))
+                                .foregroundColor(.white)
+                        }
                     }
-                }
-                .buttonStyle(PlayButtonStyle())
-            } else if isRunning {
-                HStack(spacing: MindfulSpacing.standard) {
-                    MindfulButton(
-                        title: "Pause",
-                        action: {
-                            pauseSession()
-                        },
-                        style: .secondary
-                    )
-
-                    MindfulButton(
-                        title: "Finish",
-                        action: {
-                            finishSession()
-                        },
-                        style: .primary
-                    )
-                }
-            } else {
-                HStack(spacing: MindfulSpacing.standard) {
-                    MindfulButton(
-                        title: "Resume",
-                        action: {
-                            resumeSession()
-                        },
-                        style: .secondary
-                    )
-
-                    MindfulButton(
-                        title: "Finish",
-                        action: {
-                            finishSession()
-                        },
-                        style: .primary
-                    )
+                    .buttonStyle(PlayButtonStyle())
                 }
             }
-        }
-    }
+            .frame(height: 100) // Fixed height container for primary button
 
-    private var progressValue: Double {
-        let elapsed = totalDuration - timeRemaining
-        return Double(elapsed) / Double(totalDuration)
-    }
+            // Secondary button area - always fixed height, content appears/disappears
+            VStack {
+                if sessionCoordinator.sessionStartTime != nil && !sessionCoordinator.isRunning && !sessionCoordinator.sessionCompleted {
+                    // Finish and Discard buttons (only visible when paused)
+                    HStack(spacing: MindfulSpacing.section) {
+                        // Discard button (borderless link style)
+                        Button(action: { sessionCoordinator.discardSession() }) {
+                            Text("Discard")
+                                .font(.headline)
+                                .foregroundColor(.mindfulTextSecondary)
+                        }
 
-    private var totalDuration: Int {
-        let sessionDuration = selectedHours * 3600 + selectedMinutes * 60
-        return sessionDuration + selectedWarmupSeconds
-    }
-
-    private var isInWarmupPhase: Bool {
-        guard selectedWarmupSeconds > 0 else { return false }
-        let sessionDuration = selectedHours * 3600 + selectedMinutes * 60
-        return timeRemaining > sessionDuration
-    }
-
-    private var progressRingSize: CGFloat {
-        UIDevice.current.userInterfaceIdiom == .pad ? 250 : 200
-    }
-
-    private var dynamicTimerFontSize: CGFloat {
-        let baseSize: CGFloat = UIDevice.current.userInterfaceIdiom == .pad ? 60 : 48
-        return baseSize
-    }
-
-    private var breathingCircleSize: CGFloat {
-        progressRingSize * 0.6
-    }
-
-    // MARK: - Timer Functions
-
-    private func startSession() {
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
-
-        sessionStartTime = Date()
-        timeRemaining = totalDuration
-        isRunning = true
-        startTimer()
-    }
-
-    private func pauseSession() {
-        let impactFeedback = UIImpactFeedbackGenerator(style: .light)
-        impactFeedback.impactOccurred()
-
-        isRunning = false
-        stopTimer()
-    }
-
-    private func resumeSession() {
-        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
-        impactFeedback.impactOccurred()
-
-        isRunning = true
-        startTimer()
-    }
-
-    private func finishSession() {
-        let successFeedback = UINotificationFeedbackGenerator()
-        successFeedback.notificationOccurred(.success)
-
-        stopTimer()
-        isRunning = false
-        showingCompletionView = true
-    }
-
-    private func stopSession() {
-        stopTimer()
-        isRunning = false
-        sessionStartTime = nil
-        timeRemaining = totalDuration
-    }
-
-    private func resetSession() {
-        stopTimer()
-        isRunning = false
-        sessionStartTime = nil
-        timeRemaining = totalDuration
-        notes = ""
-        showingCompletionView = false
-    }
-
-    private func updateTimeRemaining() {
-        if sessionStartTime == nil {
-            timeRemaining = totalDuration
-        }
-    }
-
-    private func startTimer() {
-        timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if timeRemaining > 0 {
-                timeRemaining -= 1
-            } else {
-                finishSession()
+                        // Finish button
+                        MindfulButton(
+                            title: "Finish",
+                            action: { sessionCoordinator.finishSession(dataCoordinator: dataCoordinator) },
+                            style: .primary
+                        )
+                    }
+                    .padding(.top, MindfulSpacing.section)
+                } else {
+                    // Empty space to maintain layout consistency
+                    Color.clear
+                }
             }
+            .frame(height: 80) // Fixed height container for secondary buttons
         }
-    }
-
-    private func stopTimer() {
-        timer?.invalidate()
-        timer = nil
-    }
-
-    private func saveSession(finalNotes: String, finalTags: [String]) {
-        guard let startTime = sessionStartTime else { return }
-
-        let actualDuration = max(totalDuration - timeRemaining, 60) // Minimum 1 minute
-        let session = MeditationSession(
-            date: startTime,
-            duration: TimeInterval(actualDuration),
-            type: selectedType,
-            notes: finalNotes.isEmpty ? notes : finalNotes,
-            isCompleted: true,
-            startTime: startTime,
-            endTime: Date()
-        )
-
-        dataCoordinator.addSession(session)
-        resetSession()
     }
 
     // MARK: - Helper Functions
-
-    private func formatTotalDuration() -> String {
-        return formatDurationString(selectedHours * 3600 + selectedMinutes * 60)
-    }
-
-    private func formatDurationString(_ seconds: Int) -> String {
-        let hours = seconds / 3600
-        let minutes = (seconds % 3600) / 60
-
-        if hours > 0 && minutes > 0 {
-            return "\(hours)h \(minutes)m"
-        } else if hours > 0 {
-            return "\(hours)h"
-        } else if minutes > 0 {
-            return "\(minutes)m"
-        } else {
-            return "0m"
-        }
-    }
-
-    private func formatWarmupTime(_ seconds: Int) -> String {
-        if seconds == 0 {
-            return "None"
-        } else if seconds < 60 {
-            return "\(seconds)s"
-        } else {
-            let minutes = seconds / 60
-            return "\(minutes)m"
-        }
-    }
-
-    private func formatTime(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
-        return String(format: "%02d:%02d", minutes, remainingSeconds)
-    }
-
-    private func formatTimeForVoiceOver(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        let remainingSeconds = seconds % 60
-        if minutes > 0 && remainingSeconds > 0 {
-            return "\(minutes) minute\(minutes == 1 ? "" : "s") and \(remainingSeconds) second\(remainingSeconds == 1 ? "" : "s")"
-        } else if minutes > 0 {
-            return "\(minutes) minute\(minutes == 1 ? "" : "s")"
-        } else {
-            return "\(remainingSeconds) second\(remainingSeconds == 1 ? "" : "s")"
-        }
-    }
 
     private func getSessionIcon(for type: SessionType) -> String {
         switch type {
@@ -567,185 +294,6 @@ struct SessionTimerView: View {
     }
 }
 
-struct SessionCompletionView: View {
-    let duration: Int
-    let type: SessionType
-    let onSave: (String, [String]) -> Void
-
-    @Environment(\.dismiss) private var dismiss
-    @State private var notes: String = ""
-    @State private var rating: Int = 0
-
-    var body: some View {
-        NavigationView {
-            VStack(spacing: MindfulSpacing.section) {
-                completionHeaderSection
-                completionHeader
-                sessionSummary
-                sessionFeedback
-                Spacer()
-                saveButton
-            }
-            .padding()
-            .background(Color.mindfulBackground.ignoresSafeArea())
-            .navigationBarHidden(true)
-        }
-    }
-
-    private var completionHeaderSection: some View {
-        HStack {
-            Spacer()
-
-            VStack(spacing: MindfulSpacing.small) {
-                Text("Session Complete")
-                    .font(.title2)
-                    .fontWeight(.medium)
-                    .foregroundColor(.mindfulTextPrimary)
-
-                Text("Well done on completing your practice")
-                    .font(.subheadline)
-                    .foregroundColor(.mindfulTextSecondary)
-            }
-
-            Spacer()
-
-            Button("Skip") {
-                onSave("", [])
-            }
-            .foregroundColor(.mindfulPrimary)
-        }
-        .padding(.horizontal, MindfulSpacing.standard)
-    }
-
-    private var completionHeader: some View {
-        VStack(spacing: MindfulSpacing.standard) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 60))
-                .foregroundColor(.mindfulPrimary)
-
-            Text("Great job!")
-                .font(.title2)
-                .fontWeight(.medium)
-
-            Text("You completed a \(formatDuration(duration)) \(type.displayName.lowercased()) session")
-                .font(.body)
-                .foregroundColor(.mindfulTextSecondary)
-                .multilineTextAlignment(.center)
-        }
-    }
-
-    private var sessionSummary: some View {
-        MindfulCard {
-            VStack(spacing: MindfulSpacing.small) {
-                HStack {
-                    Text("Session Summary")
-                        .font(.headline)
-                    Spacer()
-                }
-
-                HStack {
-                    Text("Duration:")
-                    Spacer()
-                    Text(formatDuration(duration))
-                        .fontWeight(.medium)
-                        .foregroundColor(.mindfulPrimary)
-                }
-
-                HStack {
-                    Text("Type:")
-                    Spacer()
-                    Text(type.displayName)
-                        .fontWeight(.medium)
-                        .foregroundColor(.mindfulPrimary)
-                }
-
-                HStack {
-                    Text("Date:")
-                    Spacer()
-                    Text(Date().formatted(date: .abbreviated, time: .shortened))
-                        .fontWeight(.medium)
-                        .foregroundColor(.mindfulPrimary)
-                }
-            }
-        }
-    }
-
-    private var sessionFeedback: some View {
-        VStack(spacing: MindfulSpacing.standard) {
-            MindfulCard {
-                VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
-                    HStack {
-                        Image(systemName: "star.fill")
-                            .foregroundColor(.mindfulPrimary)
-                        Text("How was your session?")
-                            .font(.headline)
-                        Spacer()
-                    }
-
-                    HStack {
-                        ForEach(1...5, id: \.self) { star in
-                            Button(
-                                action: {
-                                    rating = star
-                                },
-                                label: {
-                                Image(systemName: star <= rating ? "star.fill" : "star")
-                                    .font(.title2)
-                                    .foregroundColor(star <= rating ? .yellow : .gray)
-                                }
-                            )
-                        }
-                        Spacer()
-                    }
-                }
-            }
-
-            MindfulCard {
-                VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
-                    HStack {
-                        Image(systemName: "note.text")
-                            .foregroundColor(.mindfulPrimary)
-                        Text("Session Notes")
-                            .font(.headline)
-                        Spacer()
-                    }
-
-                    TextField("How did your session go?", text: $notes, axis: .vertical)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .lineLimit(3...6)
-
-                }
-            }
-        }
-    }
-
-    private var saveButton: some View {
-        MindfulButton(
-            title: "Save Session",
-            action: {
-                onSave(notes, [])
-            },
-            style: .primary
-        )
-    }
-
-    private func formatDuration(_ seconds: Int) -> String {
-        let minutes = seconds / 60
-        if minutes < 60 {
-            return "\(minutes) minute\(minutes == 1 ? "" : "s")"
-        } else {
-            let hours = minutes / 60
-            let remainingMinutes = minutes % 60
-            if remainingMinutes == 0 {
-                return "\(hours) hour\(hours == 1 ? "" : "s")"
-            } else {
-                return "\(hours) hour\(hours == 1 ? "" : "s") " +
-                       "\(remainingMinutes) minute\(remainingMinutes == 1 ? "" : "s")"
-            }
-        }
-    }
-}
-
 struct SessionTypeCard: View {
     let type: SessionType
     let isSelected: Bool
@@ -753,31 +301,23 @@ struct SessionTypeCard: View {
 
     var body: some View {
         Button(action: onTap) {
-            VStack(spacing: MindfulSpacing.small) {
+            VStack(spacing: 8) {
                 Image(systemName: getSessionIcon(for: type))
                     .font(.title2)
                     .foregroundColor(isSelected ? .white : .mindfulPrimary)
-                    .frame(width: 32, height: 32)
 
                 Text(type.displayName)
                     .font(.caption)
                     .fontWeight(.medium)
                     .foregroundColor(isSelected ? .white : .mindfulTextPrimary)
-                    .multilineTextAlignment(.center)
-                    .lineLimit(2)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
-            .frame(width: 90, height: 80)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(isSelected ? Color.mindfulPrimary : Color.mindfulBackground)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 12)
-                            .stroke(isSelected ? Color.mindfulPrimary : Color.mindfulSecondary.opacity(0.3), lineWidth: 1)
-                    )
-            )
-            .padding(MindfulSpacing.small)
-            .scaleEffect(isSelected ? 1.05 : 1.0)
-            .animation(.easeInOut(duration: 0.2), value: isSelected)
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, 12)
+            .background(isSelected ? Color.mindfulPrimary : Color.mindfulBackground)
+            .cornerRadius(12)
+            .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
         }
         .buttonStyle(PlainButtonStyle())
     }
@@ -793,6 +333,14 @@ struct SessionTypeCard: View {
         case .sleep: return "moon.fill"
         case .custom: return "circle.grid.3x3.fill"
         }
+    }
+}
+
+struct PlayButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
+            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
     }
 }
 
@@ -929,7 +477,6 @@ struct DurationSelectionView: View {
         }
     }
 
-
     private func formatDurationString(_ seconds: Int) -> String {
         let hours = seconds / 3600
         let minutes = (seconds % 3600) / 60
@@ -955,18 +502,4 @@ struct DurationSelectionView: View {
             return "\(minutes)m"
         }
     }
-}
-
-struct PlayButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1.0)
-            .opacity(configuration.isPressed ? 0.8 : 1.0)
-            .animation(.easeInOut(duration: 0.1), value: configuration.isPressed)
-    }
-}
-
-#Preview {
-    SessionTimerView()
-        .modelContainer(for: [MeditationSession.self, UserProfile.self, Milestone.self], inMemory: true)
 }

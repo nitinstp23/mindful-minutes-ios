@@ -38,11 +38,6 @@ struct SessionRow: View {
                         .font(.subheadline)
                         .foregroundColor(.mindfulTextSecondary)
 
-                    if !session.notes.isEmpty {
-                        Image(systemName: "note.text")
-                            .font(.caption)
-                            .foregroundColor(.mindfulSecondary)
-                    }
 
                     Spacer()
 

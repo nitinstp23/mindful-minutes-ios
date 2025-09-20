@@ -162,35 +162,30 @@ class MindfulDataCoordinator {
                 date: Date(),
                 duration: 900,
                 type: .mindfulness,
-                notes: "Great session today",
                 isCompleted: true
             ),
             MeditationSession(
                 date: calendar.date(byAdding: .hour, value: -4, to: Date()) ?? Date(),
                 duration: 600,
                 type: .breathing,
-                notes: "",
                 isCompleted: true
             ),
             MeditationSession(
                 date: calendar.date(byAdding: .day, value: -1, to: Date()) ?? Date(),
                 duration: 1200,
                 type: .bodyScan,
-                notes: "Deep relaxation session",
                 isCompleted: true
             ),
             MeditationSession(
                 date: calendar.date(byAdding: .day, value: -2, to: Date()) ?? Date(),
                 duration: 480,
                 type: .mindfulness,
-                notes: "",
                 isCompleted: true
             ),
             MeditationSession(
                 date: calendar.date(byAdding: .day, value: -3, to: Date()) ?? Date(),
                 duration: 1800,
                 type: .lovingKindness,
-                notes: "Focused on compassion",
                 isCompleted: true
             )
         ]

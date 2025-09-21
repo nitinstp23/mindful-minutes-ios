@@ -353,6 +353,10 @@ struct DurationSelectionView: View {
 
     private let warmupPresets = [0, 5, 10, 15, 30, 45, 60, 120, 180, 240, 300] // 0s to 5m
 
+    private var isDurationValid: Bool {
+        selectedHours > 0 || selectedMinutes > 0
+    }
+
     var body: some View {
         NavigationView {
             ScrollView {
@@ -392,9 +396,11 @@ struct DurationSelectionView: View {
             Button("Save") {
                 onSave()
             }
-            .foregroundColor(.mindfulPrimary)
+            .foregroundColor(isDurationValid ? .mindfulPrimary : .mindfulTextSecondary)
             .font(.body)
             .fontWeight(.semibold)
+            .disabled(!isDurationValid)
+            .opacity(isDurationValid ? 1.0 : 0.6)
         }
         .padding(.horizontal, MindfulSpacing.standard)
     }

@@ -2,11 +2,39 @@ import SwiftUI
 import SwiftData
 import Foundation
 
+enum AmbientSound: String, CaseIterable {
+    case none = "None"
+    case rain = "Rain"
+    case forest = "Forest"
+    case ocean = "Ocean"
+    case whitenoise = "White Noise"
+
+    var displayName: String {
+        return self.rawValue
+    }
+
+    var iconName: String {
+        switch self {
+        case .none: return "speaker.slash"
+        case .rain: return "cloud.rain"
+        case .forest: return "tree"
+        case .ocean: return "water.waves"
+        case .whitenoise: return "speaker.wave.2"
+        }
+    }
+}
+
 struct SessionTimerView: View {
     @Environment(MindfulDataCoordinator.self) private var dataCoordinator
     @Bindable var sessionCoordinator: SessionCoordinator
 
     private let warmupPresets = [0, 5, 10, 15, 30, 45, 60, 90, 120, 180, 240, 300] // 0s to 5m
+
+    // Additional session options
+    @State private var selectedAmbientSound: AmbientSound = .none
+    @State private var startBellEnabled: Bool = true
+    @State private var endingBellEnabled: Bool = true
+    @State private var showingSessionTypeSelection = false
 
     var body: some View {
         VStack(spacing: MindfulSpacing.section) {
@@ -56,6 +84,17 @@ struct SessionTimerView: View {
                 }
             )
         }
+        .sheet(isPresented: $showingSessionTypeSelection) {
+            SessionTypeSelectionView(
+                selectedType: $sessionCoordinator.selectedType,
+                onSave: {
+                    showingSessionTypeSelection = false
+                },
+                onCancel: {
+                    showingSessionTypeSelection = false
+                }
+            )
+        }
         .onDisappear {
             // Stop timer if view disappears
         }
@@ -64,6 +103,11 @@ struct SessionTimerView: View {
     private var headerSection: some View {
         VStack(spacing: MindfulSpacing.small) {
             if !sessionCoordinator.isRunning && sessionCoordinator.sessionStartTime == nil {
+                Text("New Session")
+                    .font(.title2)
+                    .fontWeight(.medium)
+                    .foregroundColor(.mindfulTextPrimary)
+
                 Text("Start your mindful practice")
                     .font(.subheadline)
                     .foregroundColor(.mindfulTextSecondary)
@@ -81,74 +125,83 @@ struct SessionTimerView: View {
                     .foregroundColor(.mindfulTextSecondary)
             }
         }
-        .padding(.horizontal, MindfulSpacing.standard)
+        .padding(.horizontal, MindfulSpacing.small)
+        .padding(.top, MindfulSpacing.large)
     }
 
     private var setupSection: some View {
-        VStack(spacing: MindfulSpacing.section) {
-            durationSection
-            sessionTypeSection
-        }
-    }
-
-    private var durationSection: some View {
-        MindfulCard {
-            VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
-                HStack {
-                    Image(systemName: "clock")
-                        .foregroundColor(.mindfulPrimary)
-                    Text("Duration")
-                        .font(.headline)
-                        .foregroundColor(.mindfulTextPrimary)
-                    Spacer()
-                }
-
-                Button(action: {
-                    sessionCoordinator.showingDurationSelection = true
-                }) {
-                    HStack {
-                        Text(sessionCoordinator.formatTotalDuration())
-                            .font(.title2)
-                            .fontWeight(.medium)
-                            .foregroundColor(.mindfulTextPrimary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .foregroundColor(.mindfulTextSecondary)
+        VStack(spacing: 0) {
+            // Main options container
+            VStack(spacing: 0) {
+                // Duration row
+                SessionOptionRow(
+                    icon: "clock",
+                    title: "Duration",
+                    value: sessionCoordinator.formatTotalDuration(),
+                    action: {
+                        sessionCoordinator.showingDurationSelection = true
                     }
-                    .padding()
-                    .cornerRadius(8)
-                }
-                .buttonStyle(PlainButtonStyle())
-            }
-        }
-    }
+                )
 
-    private var sessionTypeSection: some View {
-        MindfulCard {
-            VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
-                HStack {
-                    Image(systemName: "figure.mind.and.body")
-                        .foregroundColor(.mindfulPrimary)
-                    Text("Session Type")
-                        .font(.headline)
-                        .foregroundColor(.mindfulTextPrimary)
-                    Spacer()
-                }
+                Divider()
+                    .padding(.leading, 56)
 
-                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: MindfulSpacing.small), count: 3), spacing: MindfulSpacing.small) {
-                    ForEach(SessionType.allCases.prefix(6), id: \.self) { type in
-                        SessionTypeCard(
-                            type: type,
-                            isSelected: sessionCoordinator.selectedType == type,
-                            onTap: {
-                                sessionCoordinator.selectedType = type
-                            }
-                        )
+                // Session Type row
+                SessionOptionRow(
+                    icon: "figure.mind.and.body",
+                    title: "Session Type",
+                    value: sessionCoordinator.selectedType.displayName,
+                    action: {
+                        showingSessionTypeSelection = true
                     }
-                }
+                )
+
+                Divider()
+                    .padding(.leading, 56)
+
+                // Ambient Sound row
+                SessionOptionRow(
+                    icon: selectedAmbientSound.iconName,
+                    title: "Ambient Sound",
+                    value: selectedAmbientSound.displayName,
+                    action: {
+                        // Will add sound selection later
+                    }
+                )
+
+                Divider()
+                    .padding(.leading, 56)
+
+                // Start Bell row
+                SessionOptionRow(
+                    icon: "bell",
+                    title: "Start Bell",
+                    value: startBellEnabled ? "On" : "Off",
+                    action: {
+                        startBellEnabled.toggle()
+                    }
+                )
+
+                Divider()
+                    .padding(.leading, 56)
+
+                // Ending Bell row
+                SessionOptionRow(
+                    icon: "bell.badge",
+                    title: "Ending Bell",
+                    value: endingBellEnabled ? "On" : "Off",
+                    action: {
+                        endingBellEnabled.toggle()
+                    }
+                )
             }
+            .background(Color.white)
+            .cornerRadius(16)
+            .shadow(color: .black.opacity(0.04), radius: 8, x: 0, y: 2)
         }
+        .padding(.horizontal, MindfulSpacing.standard)
     }
+
 
     private var timerSection: some View {
         VStack(spacing: MindfulSpacing.section) {
@@ -214,11 +267,15 @@ struct SessionTimerView: View {
             VStack {
                 if sessionCoordinator.sessionCompleted {
                     // Session completed: Continue button
-                    MindfulButton(
-                        title: "Continue",
-                        action: { sessionCoordinator.continueAfterSession() },
-                        style: .primary
-                    )
+                    Button(action: {
+                        sessionCoordinator.continueAfterSession()
+                    }) {
+                        Text("Continue")
+                            .font(.headline)
+                            .foregroundColor(.mindfulPrimary)
+                            .fontWeight(.semibold)
+                    }
+                    .frame(minWidth: 80)
                 } else if sessionCoordinator.timerFinished {
                     // Timer finished: No primary button, only secondary buttons below
                     Color.clear
@@ -253,20 +310,36 @@ struct SessionTimerView: View {
             VStack {
                 if sessionCoordinator.sessionStartTime != nil && !sessionCoordinator.isRunning && !sessionCoordinator.sessionCompleted {
                     // Finish and Discard buttons (only visible when paused)
-                    HStack(spacing: MindfulSpacing.section) {
-                        // Discard button (borderless link style)
+                    HStack(spacing: 0) {
+                        Spacer()
+
+                        // Discard button
                         Button(action: { sessionCoordinator.discardSession() }) {
                             Text("Discard")
                                 .font(.headline)
                                 .foregroundColor(.mindfulTextSecondary)
                         }
+                        .frame(minWidth: 80)
+
+                        Spacer()
+
+                        // Separator
+                        Text("|")
+                            .font(.headline)
+                            .foregroundColor(.mindfulTextSecondary.opacity(0.5))
+
+                        Spacer()
 
                         // Finish button
-                        MindfulButton(
-                            title: "Finish",
-                            action: { sessionCoordinator.finishSession(dataCoordinator: dataCoordinator) },
-                            style: .primary
-                        )
+                        Button(action: { sessionCoordinator.finishSession(dataCoordinator: dataCoordinator) }) {
+                            Text("Finish")
+                                .font(.headline)
+                                .foregroundColor(.mindfulPrimary)
+                                .fontWeight(.semibold)
+                        }
+                        .frame(minWidth: 80)
+
+                        Spacer()
                     }
                     .padding(.top, MindfulSpacing.section)
                 } else {
@@ -291,6 +364,49 @@ struct SessionTimerView: View {
         case .sleep: return "moon.fill"
         case .custom: return "circle.grid.3x3.fill"
         }
+    }
+}
+
+struct SessionOptionRow: View {
+    let icon: String
+    let title: String
+    let value: String
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: MindfulSpacing.standard) {
+                // Icon
+                Image(systemName: icon)
+                    .font(.system(size: 18, weight: .medium))
+                    .foregroundColor(.mindfulPrimary)
+                    .frame(width: 24, height: 24)
+
+                // Title
+                Text(title)
+                    .font(.body)
+                    .fontWeight(.medium)
+                    .foregroundColor(.mindfulTextPrimary)
+                    .multilineTextAlignment(.leading)
+
+                Spacer()
+
+                // Value
+                Text(value)
+                    .font(.body)
+                    .foregroundColor(.mindfulTextSecondary)
+                    .multilineTextAlignment(.trailing)
+
+                // Chevron
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.mindfulTextSecondary.opacity(0.6))
+            }
+            .padding(.horizontal, MindfulSpacing.small)
+            .padding(.vertical, 12)
+            .background(Color.clear)
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
@@ -360,14 +476,12 @@ struct DurationSelectionView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: MindfulSpacing.large) {
+                VStack(spacing: MindfulSpacing.small) {
                     headerSection
                     durationSection
                     warmupSection
-                    Spacer(minLength: MindfulSpacing.large)
                 }
-                .padding(.horizontal, MindfulSpacing.standard)
-                .padding(.vertical, MindfulSpacing.small)
+                .padding()
             }
             .background(Color.mindfulBackground.ignoresSafeArea())
             .navigationBarHidden(true)
@@ -506,6 +620,75 @@ struct DurationSelectionView: View {
         } else {
             let minutes = seconds / 60
             return "\(minutes)m"
+        }
+    }
+}
+
+struct SessionTypeSelectionView: View {
+    @Binding var selectedType: SessionType
+    let onSave: () -> Void
+    let onCancel: () -> Void
+
+    var body: some View {
+        NavigationView {
+            ScrollView {
+                VStack(spacing: MindfulSpacing.standard) {
+                    headerSection
+                    sessionTypeGrid
+                    Spacer(minLength: MindfulSpacing.standard)
+                }
+                .padding(.horizontal, MindfulSpacing.small)
+                .padding(.vertical, MindfulSpacing.small)
+            }
+            .background(Color.mindfulBackground.ignoresSafeArea())
+            .navigationBarHidden(true)
+        }
+    }
+
+    private var headerSection: some View {
+        HStack {
+            Button("Cancel") {
+                onCancel()
+            }
+            .foregroundColor(.mindfulPrimary)
+            .font(.body)
+
+            Spacer()
+
+            VStack(spacing: 4) {
+                Text("Session Type")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.mindfulTextPrimary)
+            }
+
+            Spacer()
+
+            Button("Save") {
+                onSave()
+            }
+            .foregroundColor(.mindfulPrimary)
+            .font(.body)
+            .fontWeight(.semibold)
+        }
+        .padding(.horizontal, MindfulSpacing.standard)
+    }
+
+    private var sessionTypeGrid: some View {
+        MindfulCard {
+            VStack(alignment: .leading, spacing: MindfulSpacing.standard) {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: MindfulSpacing.small), count: 3), spacing: MindfulSpacing.small) {
+                    ForEach(SessionType.allCases, id: \.self) { type in
+                        SessionTypeCard(
+                            type: type,
+                            isSelected: selectedType == type,
+                            onTap: {
+                                selectedType = type
+                            }
+                        )
+                    }
+                }
+            }
         }
     }
 }

@@ -15,7 +15,7 @@ struct ContentView: View {
     @State private var sessionCoordinator = SessionCoordinator()
 
     private var isSessionActive: Bool {
-        sessionCoordinator.isRunning || sessionCoordinator.timerFinished || sessionCoordinator.sessionCompleted
+        sessionCoordinator.sessionStartTime != nil && !sessionCoordinator.sessionCompleted
     }
 
     var body: some View {

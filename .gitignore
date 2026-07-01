@@ -77,3 +77,6 @@ vendor/
 
 Config.xcconfig
 
+
+# Scout artifact-upload test helper (local only)
+register-trust.sh

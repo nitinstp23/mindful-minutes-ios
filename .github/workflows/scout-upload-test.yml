@@ -41,6 +41,7 @@ env:
   APP_IDENTIFIER: axi-test-ios
   PLATFORM: ios
   ARTIFACT_TYPE: dsym
+  ARCH: arm64          # required for dsym
 
 jobs:
   upload:
@@ -51,6 +52,8 @@ jobs:
           set -euo pipefail
           head -c 2048 /dev/urandom | base64 > mapping.txt
           echo "ARTIFACT_PATH=mapping.txt" >> "$GITHUB_ENV"
+          # dsym requires a debug_id (Mach-O UUID). Generate one for this test run.
+          echo "DEBUG_ID=$(cat /proc/sys/kernel/random/uuid)" >> "$GITHUB_ENV"
 
       - name: Mint Scout OIDC token
         id: oidc
@@ -90,10 +93,12 @@ jobs:
                   --arg artifact_type "$ARTIFACT_TYPE" \
                   --arg checksum_sha256 "$CHECKSUM" \
                   --argjson size_bytes "$SIZE" \
+                  --arg debug_id "$DEBUG_ID" \
+                  --arg arch "$ARCH" \
                   '{app_identifier:$app_identifier, app_version:$app_version,
                     build_number:$build_number, platform:$platform,
                     artifact_type:$artifact_type, checksum_sha256:$checksum_sha256,
-                    size_bytes:$size_bytes}')")
+                    size_bytes:$size_bytes, debug_id:$debug_id, arch:$arch}')")
 
           ARTIFACT_ID=$(echo "$REGISTER" | jq -r '.id')
           UPLOAD_URL=$(echo "$REGISTER" | jq -r '.upload_url')
